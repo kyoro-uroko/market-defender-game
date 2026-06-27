@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マーケット・ディフェンダー</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+            background: #0d1117; color: #e6edf3;
+            min-height: 100vh; padding: 16px; max-width: 680px; margin: 0 auto;
+        }
+        .header { text-align: center; margin-bottom: 10px; }
+        .title   { font-size: 24px; font-weight: 900; color: #58a6ff; }
+        .subtitle { font-size: 12px; color: #8b949e; margin-top: 2px; }
+
+        /* タイトル画面 */
+        .title-hero { text-align: center; background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 26px 20px; margin-bottom: 12px; }
+        .th-emoji { font-size: 50px; margin-bottom: 6px; }
+        .th-name  { font-size: 26px; font-weight: 900; color: #58a6ff; margin-bottom: 12px; }
+        .th-desc  { font-size: 13px; color: #8b949e; line-height: 1.8; }
+        .th-desc strong { color: #e6edf3; }
+        .btn-start { width: 100%; padding: 16px; background: linear-gradient(135deg, #1f6feb, #388bfd); border: none; border-radius: 14px; color: #fff; font-size: 18px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; }
+        .btn-start:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(56,139,253,0.4); }
+        .th-assets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .tha-card  { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 10px 12px; }
+        .tha-name  { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+        .tha-desc  { font-size: 11px; color: #8b949e; line-height: 1.45; }
+
+        /* スコアボード */
+        .score-board { display: none; background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 8px 14px 10px; margin-bottom: 10px; }
+        .sb-title { font-size: 9px; color: #484f58; text-align: center; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .sb-inner { display: flex; align-items: stretch; }
+        .sb-stat  { text-align: center; flex: 1; padding: 2px 6px; border-right: 1px solid #21262d; }
+        .sb-stat:last-child { border-right: none; }
+        .sb-label  { font-size: 9px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .sb-val    { font-size: 15px; font-weight: 700; }
+        .sb-recent { font-size: 15px; letter-spacing: 2px; }
+
+        /* ステータスバー */
+        .status-bar { display: grid; grid-template-columns: 1fr 2fr 1.5fr; gap: 8px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; }
+        .status-item  { text-align: center; }
+        .status-label { font-size: 9px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; }
+        .status-value { font-size: 18px; font-weight: 700; margin-top: 2px; }
+        .val-neutral  { color: #58a6ff; }
+        .val-positive { color: #3fb950; }
+        .val-negative { color: #f85149; }
+
+        /* ニュースパネル */
+        .news-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+        .news-panel-header { padding: 8px 14px; background: #1c2128; border-bottom: 1px solid #30363d; font-size: 11px; color: #58a6ff; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* メインニュース */
+        .main-label-bar { padding: 6px 12px; font-size: 10px; font-weight: 700; color: #e8855a; background: rgba(232,133,90,0.08); border-bottom: 1px solid rgba(232,133,90,0.18); text-transform: uppercase; letter-spacing: 1px; }
+        .main-news-card { padding: 12px 14px; background: rgba(255,255,255,0.025); border-left: 4px solid #30363d; transition: border-left-color 0.4s, background 0.4s; }
+        .main-news-card.rel-high { border-left-color: #3fb950; }
+        .main-news-card.rel-med  { border-left-color: #ffa657; }
+        .main-news-card.rel-low  { border-left-color: #f85149; }
+        .main-news-card.verdict-true  { background: rgba(63,185,80,0.07);  border-left-color: #3fb950; }
+        .main-news-card.verdict-false { background: rgba(248,81,73,0.07);   border-left-color: #f85149; }
+        .main-news-card .ni-body { font-size: 13px; color: #c9d1d9; line-height: 1.5; margin-bottom: 6px; }
+        .main-news-card .hint-item { font-size: 12px; }
+
+        /* サブニュース */
+        .sub-label-bar { padding: 5px 12px; font-size: 10px; font-weight: 700; color: #484f58; background: #1c2128; border-top: 1px solid #30363d; border-bottom: 1px solid #21262d; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
+        .sub-count-badge { background: rgba(72,79,88,0.3); border-radius: 10px; padding: 1px 6px; font-size: 9px; color: #484f58; }
+        .sub-news-list { max-height: 210px; overflow-y: auto; padding: 6px 8px; display: flex; flex-direction: column; gap: 4px; }
+        .sub-news-list::-webkit-scrollbar { width: 3px; }
+        .sub-news-list::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+
+        .sub-news-item { padding: 6px 10px; border-radius: 7px; border-left: 3px solid #30363d; background: rgba(255,255,255,0.015); transition: border-left-color 0.4s, background 0.4s; }
+        .sub-news-item.rel-high { border-left-color: #238636; }
+        .sub-news-item.rel-med  { border-left-color: #9a6700; }
+        .sub-news-item.rel-low  { border-left-color: #8b2626; }
+        .sub-news-item.verdict-true  { background: rgba(63,185,80,0.06);  border-left-color: #3fb950; }
+        .sub-news-item.verdict-false { background: rgba(248,81,73,0.06);   border-left-color: #f85149; }
+
+        /* 共通ニュース要素 */
+        .ni-header { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; flex-wrap: wrap; }
+        .ni-cat-main { font-size: 12px; font-weight: 700; color: #e6edf3; }
+        .ni-cat-sub  { font-size: 11px; font-weight: 700; color: #c9d1d9; }
+        .ni-body     { font-size: 11px; color: #8b949e; line-height: 1.4; margin-bottom: 4px; }
+        .ni-contrib   { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; margin-top: 5px; }
+        .contrib-label { font-size: 10px; color: #8b949e; }
+        .contrib-item  { font-size: 11px; font-weight: 700; padding: 1px 5px; border-radius: 3px; background: rgba(255,255,255,0.04); }
+        .contrib-pos   { color: #3fb950; }
+        .contrib-neg   { color: #f85149; }
+        .contrib-none  { font-size: 10px; color: #484f58; }
+
+        .rel-badge { font-size: 9px; padding: 1px 4px; border-radius: 3px; font-weight: 700; }
+        .rel-med-badge { background: rgba(255,166,87,0.18); color: #ffa657; border: 1px solid rgba(255,166,87,0.3); }
+        .rel-low-badge { background: rgba(248,81,73,0.18);  color: #f85149; border: 1px solid rgba(248,81,73,0.3); }
+        .verdict-badge { font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 700; margin-left: auto; }
+        .vb-true  { background: rgba(63,185,80,0.2);  color: #3fb950; border: 1px solid rgba(63,185,80,0.3); }
+        .vb-false { background: rgba(248,81,73,0.2);   color: #f85149; border: 1px solid rgba(248,81,73,0.3); }
+
+        /* 資産グリッド */
+        .asset-idx-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 10px; }
+        @media (max-width: 480px) { .asset-idx-grid { grid-template-columns: repeat(2, 1fr); } }
+        .ai-card { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 9px 10px; text-align: center; }
+        .ai-name  { font-size: 11px; font-weight: 700; margin-bottom: 3px; }
+        .ai-value { font-size: 12px; font-weight: 700; color: #e6edf3; margin-bottom: 2px; }
+        .ai-chg   { font-size: 11px; font-weight: 700; margin-bottom: 3px; min-height: 13px; }
+        .ai-index { font-size: 10px; color: #8b949e; background: #0d1117; border-radius: 4px; padding: 2px 4px; }
+
+        /* スライダー */
+        .allocation-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+        .alloc-title { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 700; }
+        .slider-item { margin-bottom: 12px; }
+        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .slider-label { font-size: 13px; font-weight: 700; }
+        .slider-value { font-size: 14px; font-weight: 700; min-width: 38px; text-align: right; }
+        .slider-track { position: relative; height: 32px; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; overflow: hidden; }
+        .slider-marks { position: absolute; width: 100%; height: 100%; display: flex; top: 0; left: 0; pointer-events: none; }
+        .slider-mark { flex: 1; border-right: 1px solid #21262d; font-size: 9px; color: #484f58; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 2px; }
+        .slider-mark:last-child { border-right: none; }
+        .slider-bg { position: absolute; height: 100%; opacity: 0.18; pointer-events: none; border-radius: 8px; }
+        .slider-item.cash  .slider-bg { background: #8b949e; }
+        .slider-item.gold  .slider-bg { background: #d4a017; }
+        .slider-item.index .slider-bg { background: #58a6ff; }
+        .slider-item.hightech .slider-bg { background: #d2a8ff; }
+
+        input[type="range"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer; appearance: none; -webkit-appearance: none; background: transparent; z-index: 10; }
+        input[type="range"]::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #58a6ff; border: 3px solid #0d1117; cursor: pointer; box-shadow: 0 2px 8px rgba(88,166,255,0.4); }
+        .slider-item.cash     input::-webkit-slider-thumb { background: #8b949e; box-shadow: 0 2px 8px rgba(139,148,158,0.4); }
+        .slider-item.gold     input::-webkit-slider-thumb { background: #d4a017; box-shadow: 0 2px 8px rgba(212,160,23,0.4); }
+        .slider-item.index    input::-webkit-slider-thumb { background: #58a6ff; }
+        .slider-item.hightech input::-webkit-slider-thumb { background: #d2a8ff; box-shadow: 0 2px 8px rgba(210,168,255,0.4); }
+
+        .alloc-total { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .total-label { font-size: 12px; color: #8b949e; }
+        .total-value { font-size: 14px; font-weight: 700; }
+        .total-ok   { color: #3fb950; }
+        .total-warn { color: #f85149; }
+
+        /* ボタン */
+        .btn-next { width: 100%; padding: 13px; background: linear-gradient(135deg, #238636, #1a7f37); border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s ease; margin-bottom: 8px; }
+        .btn-next:hover:not(:disabled) { background: linear-gradient(135deg, #2ea043, #238636); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(46,160,67,0.35); }
+        .btn-next:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+
+        /* ログ */
+        .event-log { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px 12px; max-height: 90px; overflow-y: auto; }
+        .log-header { font-size: 9px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .log-entry  { font-size: 10px; color: #8b949e; padding: 2px 0; border-bottom: 1px solid #21262d; line-height: 1.4; }
+        .log-entry:last-child { border-bottom: none; }
+        .log-month  { color: #58a6ff; font-weight: 700; }
+
+        /* ゲームオーバー */
+        #game-over-screen { display: none; }
+        .go-card { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 28px 20px; text-align: center; }
+        .go-emoji   { font-size: 56px; margin-bottom: 10px; }
+        .go-rank    { font-size: 11px; color: #8b949e; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+        .go-title   { font-size: 24px; font-weight: 900; margin-bottom: 6px; }
+        .go-sub     { font-size: 12px; color: #8b949e; margin-bottom: 14px; }
+        .go-amount  { font-size: 36px; font-weight: 900; margin-bottom: 4px; }
+        .go-pnl     { font-size: 18px; font-weight: 700; margin-bottom: 3px; }
+        .go-initial { font-size: 11px; color: #8b949e; margin-bottom: 18px; }
+        .go-stats   { display: flex; justify-content: center; gap: 20px; margin-bottom: 16px; }
+        .gs-item    { text-align: center; }
+        .gs-label   { font-size: 10px; color: #8b949e; margin-bottom: 2px; }
+        .gs-val     { font-size: 16px; font-weight: 700; }
+        .go-history { background: #0d1117; border: 1px solid #21262d; border-radius: 12px; padding: 10px 12px; margin-bottom: 16px; text-align: left; }
+        .gh-title   { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 7px; }
+        .gh-row     { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #1c2128; font-size: 11px; }
+        .gh-row:last-child { border-bottom: none; }
+        .gh-date    { color: #484f58; width: 76px; font-size: 10px; }
+        .gh-amount  { color: #e6edf3; font-weight: 700; }
+        .gh-pct     { font-weight: 700; min-width: 52px; text-align: right; }
+        .gh-rank    { font-size: 15px; min-width: 22px; text-align: center; }
+        .gh-best    { background: rgba(88,166,255,0.05); border-radius: 4px; padding: 1px 4px; }
+        .go-btns { display: flex; gap: 10px; justify-content: center; }
+        .btn-restart { padding: 13px 30px; background: #1f6feb; border: none; border-radius: 12px; color: white; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+        .btn-restart:hover { background: #388bfd; transform: translateY(-1px); }
+        .btn-title { padding: 13px 26px; background: #21262d; border: 1px solid #30363d; border-radius: 12px; color: #c9d1d9; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+        .btn-title:hover { background: #30363d; transform: translateY(-1px); }
+    </style>
+</head>
+<body>
+
+<div id="title-screen">
+    <div class="title-hero">
+        <div class="th-emoji">📈</div>
+        <div class="th-name">マーケット・ディフェンダー</div>
+        <div class="th-desc">初期資産 <strong>1,000万円</strong> を元手に、<br>12か月間の市場を運用せよ。<br>ニュースを読み解き、4つの資産に配分しよう。</div>
+    </div>
+    <div class="score-board" id="score-board">
+        <div class="sb-title">📋 過去の記録</div>
+        <div class="sb-inner" id="sb-inner"></div>
+    </div>
+    <button class="btn-start" onclick="startGame()">▶ ゲームスタート</button>
+    <div class="th-assets" id="th-assets"></div>
+</div>
+
+<div id="game-area" style="display:none">
+    <div class="header">
+        <div class="title">📈 マーケット・ディフェンダー</div>
+        <div class="subtitle">〜 12か月間の市場を生き残れ 〜</div>
+    </div>
+    <div class="status-bar">
+        <div class="status-item">
+            <div class="status-label">Month</div>
+            <div class="status-value val-neutral" id="month-display">1 / 12</div>
+        </div>
+        <div class="status-item">
+            <div class="status-label">総資産</div>
+            <div class="status-value val-neutral" id="total-display">¥10,000,000</div>
+        </div>
+        <div class="status-item">
+            <div class="status-label">損益</div>
+            <div class="status-value val-neutral" id="pnl-display">± ¥0</div>
+        </div>
+    </div>
+
+    <div class="news-panel">
+        <div class="news-panel-header" id="news-header-month">📰 MONTH 1 / 12 のニュース</div>
+        <div class="main-label-bar">🔥 今月のメインニュース</div>
+        <div id="main-news-container"></div>
+        <div class="sub-label-bar">📋 サブニュース <span class="sub-count-badge" id="sub-count">5件</span></div>
+        <div class="sub-news-list" id="sub-news-list"></div>
+    </div>
+
+    <div class="asset-idx-grid" id="asset-idx-grid"></div>
+
+    <div class="allocation-panel">
+        <div class="alloc-title">資産配分を調整</div>
+
+        <div class="slider-item cash">
+            <div class="slider-header">
+                <span class="slider-label">💴 現金</span>
+                <span class="slider-value" id="sv-cash">25%</span>
+            </div>
+            <div class="slider-track">
+                <div class="slider-bg" id="sbg-cash" style="width:25%"></div>
+                <div class="slider-marks"><div class="slider-mark">0</div><div class="slider-mark">25</div><div class="slider-mark">50</div><div class="slider-mark">75</div><div class="slider-mark">100</div></div>
+                <input type="range" id="slider-cash" min="0" max="100" step="5" value="25" oninput="onSlider('cash')">
+            </div>
+        </div>
+
+        <div class="slider-item gold">
+            <div class="slider-header">
+                <span class="slider-label">💛 ゴールド</span>
+                <span class="slider-value" id="sv-gold">25%</span>
+            </div>
+            <div class="slider-track">
+                <div class="slider-bg" id="sbg-gold" style="width:25%"></div>
+                <div class="slider-marks"><div class="slider-mark">0</div><div class="slider-mark">25</div><div class="slider-mark">50</div><div class="slider-mark">75</div><div class="slider-mark">100</div></div>
+                <input type="range" id="slider-gold" min="0" max="100" step="5" value="25" oninput="onSlider('gold')">
+            </div>
+        </div>
+
+        <div class="slider-item index">
+            <div class="slider-header">
+                <span class="slider-label">🌍 全世界インデックス</span>
+                <span class="slider-value" id="sv-index">25%</span>
+            </div>
+            <div class="slider-track">
+                <div class="slider-bg" id="sbg-index" style="width:25%"></div>
+                <div class="slider-marks"><div class="slider-mark">0</div><div class="slider-mark">25</div><div class="slider-mark">50</div><div class="slider-mark">75</div><div class="slider-mark">100</div></div>
+                <input type="range" id="slider-index" min="0" max="100" step="5" value="25" oninput="onSlider('index')">
+            </div>
+        </div>
+
+        <div class="slider-item hightech">
+            <div class="slider-header">
+                <span class="slider-label">💻 ハイテク株</span>
+                <span class="slider-value" id="sv-hightech">25%</span>
+            </div>
+            <div class="slider-track">
+                <div class="slider-bg" id="sbg-hightech" style="width:25%"></div>
+                <div class="slider-marks"><div class="slider-mark">0</div><div class="slider-mark">25</div><div class="slider-mark">50</div><div class="slider-mark">75</div><div class="slider-mark">100</div></div>
+                <input type="range" id="slider-hightech" min="0" max="100" step="5" value="25" oninput="onSlider('hightech')">
+            </div>
+        </div>
+
+        <div class="alloc-total">
+            <span class="total-label">配分の合計</span>
+            <span class="total-value total-ok" id="total-pct">100%</span>
+        </div>
+    </div>
+
+    <button class="btn-next" id="btn-next" onclick="nextMonth()">次の月へ →</button>
+
+    <div class="event-log" id="event-log">
+        <div class="log-header">運用ログ</div>
+        <div class="log-entry"><span class="log-month">[START]</span> 12か月の運用開始！ニュースを読んで配分を決めよう。</div>
+    </div>
+</div>
+
+<div id="game-over-screen"></div>
+
+<script>
+/* ================================================================
+   定数
+   ================================================================ */
+const INITIAL    = 10_000_000;
+const MAX_MONTHS = 12;
+const ASSETS     = ['cash', 'gold', 'index', 'hightech'];
+const SCORE_KEY  = 'mdf_v4_scores';
+
+// 毎月の背景ドリフト
+// 現金=0、ゴールド=横ばい微増、インデックス=長期成長+5%、ハイテク=微増
+const DRIFT = { cash: 0, gold: 0.5, index: 5.0, hightech: 1.0 };
+
+const ASSET_META = {
+    cash:     { name: '現金',           icon: '💴', color: '#8b949e' },
+    gold:     { name: 'ゴールド',       icon: '💛', color: '#d4a017' },
+    index:    { name: '全世界インデックス', icon: '🌍', color: '#58a6ff' },
+    hightech: { name: 'ハイテク株',       icon: '💻', color: '#d2a8ff' },
+};
+
+/* ================================================================
+   メインニュースDB
+   【設計方針】
+   ・現金は絶対に動かない（cash 常に 0）
+   ・ゴールドとハイテクは逆相関（有事→金↑ハイテク↓、テック特需→金↓ハイテク↑）
+   ・利上げ時は現金以外すべて下落（現金退避のターン）
+   ・インフレ→金が最も輝くターン
+   ・値動き幅は月次として現実的な範囲に抑制
+     (ハイテク: ±15〜35%、ゴールド: ±10〜35%、インデックス: ±8〜22%)
+   ================================================================ */
+const MAIN_DB = {
+
+    // テック爆騰 → ゴールド下落、インデックス上昇、ハイテク爆騰
+    techBoom: {
+        label: "AI・テック特需", emoji: "💻",
+        baseEffect: { cash: 0, gold: -8, index: 8, hightech: 28 },
+        subjects: ["NVIDIA", "OpenAI", "Google DeepMind", "Microsoft Azure", "Meta AI",
+                   "TSMCの受注台帳", "Anthropic", "AMD", "Apple Intelligence", "Broadcom"],
+        predicates: ["が革新的な新型AIチップを量産開始し",
+                     "が予想の2倍を超える爆発的な決算を発表し",
+                     "の次世代AIモデルが業界の常識を覆し",
+                     "が政府の兆単位のAI補助金に選定され",
+                     "のCEOが「AI革命は今まさに頂点にある」と宣言し"],
+        modifiers: [
+            { text: "半導体・AI関連株に世界中から買いが殺到しています。",         adj: { cash: 0, gold: -4, index: 4,  hightech: 10 } },
+            { text: "テックセクター全体に強烈な追い風が吹き、安全資産は売られています。", adj: { cash: 0, gold: -5, index: 5, hightech: 8  } },
+            { text: "機関投資家がリスクオン姿勢に転じ一斉に買い増しに動いています。",  adj: { cash: 0, gold: -5, index: 5,  hightech: 12 } },
+            { text: "しかし実際の収益化は2年以上先との冷静な見方もあります。",       adj: { cash: 0, gold: 2,  index: -2, hightech: -8 } },
+        ],
+    },
+
+    // テック崩壊 → ゴールド上昇、インデックス下落、ハイテク暴落
+    techCrash: {
+        label: "ハイテク株崩壊", emoji: "📵",
+        baseEffect: { cash: 0, gold: 8, index: -8, hightech: -28 },
+        subjects: ["NASDAQ総合指数", "ハイテクセクター全体", "AI関連銘柄群",
+                   "グロース株市場", "半導体指数（SOX）"],
+        predicates: ["が利益確定売りと空売りの挟み撃ちで急落し",
+                     "が規制当局の大規模調査開始で投資家の逃走が加速し",
+                     "の決算シーズンに相次ぐ失望決算が連鎖崩壊を招き",
+                     "がAIバブル崩壊の兆候として市場に認識され"],
+        modifiers: [
+            { text: "安全資産ゴールドへの逃避が始まっています。",                 adj: { cash: 0, gold: 6,  index: -4, hightech: -10 } },
+            { text: "損切り売りのドミノ倒しが止まらず、ゴールドが買われています。",  adj: { cash: 0, gold: 8,  index: -5, hightech: -14 } },
+            { text: "しかし長期投資家は押し目買いを狙っており底値圏との見方もあります。", adj: { cash: 0, gold: -3, index: 3, hightech: 8  } },
+        ],
+    },
+
+    // 地政学リスク → ゴールド爆騰、インデックス下落、ハイテク暴落
+    geopolitics: {
+        label: "地政学・有事勃発", emoji: "⚔️",
+        baseEffect: { cash: 0, gold: 32, index: -16, hightech: -20 },
+        subjects: ["中東の主要産油国周辺", "台湾海峡", "東欧の前線",
+                   "ホルムズ海峡", "南シナ海の要衝", "黒海の穀物輸送路"],
+        predicates: ["で突発的な大規模軍事衝突が勃発し",
+                     "での緊張が臨界点を超え複数国が軍を展開し",
+                     "で大規模なインフラへの攻撃が確認され",
+                     "の完全封鎖が現実のものとなり世界が震撼し"],
+        modifiers: [
+            { text: "有事の金買いが世界規模で起きています。",                       adj: { cash: 0, gold: 12, index: -6,  hightech: -10 } },
+            { text: "供給網の寸断でハイテク株は特に深刻な打撃を受けています。",      adj: { cash: 0, gold: 8,  index: -8,  hightech: -14 } },
+            { text: "しかし水面下で停戦交渉が進んでいるとの情報もあります。",        adj: { cash: 0, gold: -10, index: 6, hightech: 8  } },
+            { text: "G7が緊急制裁パッケージを発動しゴールドへの資金流入が加速しています。", adj: { cash: 0, gold: 14, index: -8, hightech: -12 } },
+        ],
+    },
+
+    // インフレ急加速 → ゴールド最大の見せ場、株は下落
+    inflation: {
+        label: "インフレ急加速", emoji: "📈",
+        baseEffect: { cash: 0, gold: 26, index: -10, hightech: -8 },
+        subjects: ["米国消費者物価指数（CPI）", "欧州のHICP（調和インフレ率）",
+                   "生産者物価指数（PPI）", "コアインフレ率", "ブレークイーブンインフレ率"],
+        predicates: ["が予想の2〜3倍の急上昇を記録し中央銀行が緊急対応を迫られ",
+                     "が40年ぶりの水準に達しスタグフレーションの亡霊が蘇り",
+                     "が制御不能の上昇スパイラルに入ったとの分析が広まり"],
+        modifiers: [
+            { text: "インフレヘッジとしてゴールドへの資金流入が急増しています。",    adj: { cash: 0, gold: 12, index: -5,  hightech: -4  } },
+            { text: "実物資産への逃避でゴールドが輝いています。",                   adj: { cash: 0, gold: 10, index: -6,  hightech: -5  } },
+            { text: "追加利上げが不可避となりグロース株は特に打撃を受けます。",      adj: { cash: 0, gold: 6,  index: -8,  hightech: -12 } },
+            { text: "しかし一時的なサプライショックとの見方もあります。",           adj: { cash: 0, gold: -5, index: 3,   hightech: 2   } },
+        ],
+    },
+
+    // 金融引き締め → 全員やられる、現金退避のターン
+    ratehike: {
+        label: "金融引き締め強化", emoji: "🏦",
+        baseEffect: { cash: 0, gold: -16, index: -16, hightech: -24 },
+        subjects: ["FRBのパウエル議長", "欧州中央銀行（ECB）のラガルド総裁",
+                   "日銀の政策決定会合", "BIS（国際決済銀行）"],
+        predicates: ["が市場予想を大幅に上回る大幅利上げを断行し",
+                     "がインフレ完全撲滅まで利上げを止めないと宣言し",
+                     "が量的引き締め（QT）のペースを2倍に加速することを決定し"],
+        modifiers: [
+            { text: "ドル高でゴールドが売られ、株式市場もリスクオフです。",           adj: { cash: 0, gold: -8,  index: -6,  hightech: -10 } },
+            { text: "金利上昇でゴールドの機会費用が高まり売りが加速しています。",     adj: { cash: 0, gold: -10, index: -5,  hightech: -8  } },
+            { text: "しかし実際の利上げ幅は市場予想を下回りました。",               adj: { cash: 0, gold: 5,   index: 6,   hightech: 8   } },
+        ],
+    },
+
+    // 金融緩和 → ゴールド上昇、ハイテク爆騰
+    ratecut: {
+        label: "金融緩和・利下げ", emoji: "🕊️",
+        baseEffect: { cash: 0, gold: 18, index: 14, hightech: 22 },
+        subjects: ["FRBの緊急会合", "ECBの政策委員会",
+                   "G20の協調声明", "世界主要中央銀行連合"],
+        predicates: ["が予防的な大幅利下げを電撃決定し",
+                     "が量的緩和（QE）の即時再開と無制限の資産購入を発表し",
+                     "が「あらゆる手段を講じる」と宣言し"],
+        modifiers: [
+            { text: "ドル安でゴールドが買われ、株式市場にも資金が流入しています。",   adj: { cash: 0, gold: 8,  index: 6,  hightech: 10 } },
+            { text: "特に将来収益に依存するハイテク・グロース株に最大の恩恵です。",   adj: { cash: 0, gold: 5,  index: 5,  hightech: 14 } },
+            { text: "しかし利下げ効果への懐疑論も根強く上値は限られます。",         adj: { cash: 0, gold: -4, index: -3, hightech: -6 } },
+        ],
+    },
+
+    // 景気後退 → ゴールド上昇（低インフレ不況）、株は下落
+    recession: {
+        label: "景気後退入り確認", emoji: "📉",
+        baseEffect: { cash: 0, gold: 12, index: -18, hightech: -14 },
+        subjects: ["米国GDP成長率", "ユーロ圏の経済指標",
+                   "IMFの世界経済見通し", "OECDの景気先行指数"],
+        predicates: ["が2四半期連続のマイナス成長でリセッション入りを公式確認し",
+                     "が「世界同時不況の入口」との衝撃的な分析を公表し",
+                     "が戦後最大級の落ち込みを記録し"],
+        modifiers: [
+            { text: "景気後退の長期化懸念でゴールドへの逃避が続いています。",        adj: { cash: 0, gold: 8,  index: -8,  hightech: -6  } },
+            { text: "リスク資産からの逃避が加速しゴールドが上昇しています。",        adj: { cash: 0, gold: 6,  index: -10, hightech: -8  } },
+            { text: "しかし政府が大規模財政出動を決定し最悪期は脱したとも言えます。", adj: { cash: 0, gold: -4, index: 5,   hightech: 4   } },
+        ],
+    },
+
+    // 景気拡大 → ゴールド微減（リスクオン）、株は上昇
+    econboom: {
+        label: "景気拡大・好景気", emoji: "🌱",
+        baseEffect: { cash: 0, gold: -5, index: 10, hightech: 14 },
+        subjects: ["米国雇用統計", "世界製造業PMI", "G7のGDP統計",
+                   "主要国の消費支出データ", "国際貿易統計"],
+        predicates: ["が過去最高を更新する非常に強い数値を記録し",
+                     "が景気後退懸念を完全に払拭する圧倒的な強さを示し",
+                     "がゴルディロックス経済の継続を証明し"],
+        modifiers: [
+            { text: "リスクオンでゴールドが売られ、株式市場は軒並み上昇しています。",  adj: { cash: 0, gold: -4, index: 5,  hightech: 8  } },
+            { text: "利下げ期待と景気好調のダブル追い風です。",                      adj: { cash: 0, gold: -4, index: 6,  hightech: 10 } },
+            { text: "ただし過熱感からインフレ再燃・利上げ再開が警戒されます。",       adj: { cash: 0, gold: 4,  index: -4, hightech: -5 } },
+        ],
+    },
+
+    // 市場パニック → ゴールド急騰、株は全面暴落
+    panicSell: {
+        label: "市場パニック・崩壊", emoji: "😱",
+        baseEffect: { cash: 0, gold: 18, index: -22, hightech: -28 },
+        subjects: ["VIX恐怖指数", "大手ヘッジファンドの解約ラッシュ",
+                   "機関投資家の強制ロスカット", "信用収縮の連鎖反応"],
+        predicates: ["が過去最高水準まで急騰し全資産が同時売られ",
+                     "が止まらない連鎖で「何でもかんでも売れ」の状態となり",
+                     "が「リーマンショック以来」と形容される事態となり"],
+        modifiers: [
+            { text: "ゴールドと現金だけが買われる「質への逃避」が起きています。",     adj: { cash: 0, gold: 10, index: -8,  hightech: -10 } },
+            { text: "あらゆるリスク資産が叩き売られゴールドが急騰しています。",       adj: { cash: 0, gold: 12, index: -10, hightech: -14 } },
+            { text: "しかし逆張りの賢人たちは静かに資産を拾い始めています。",        adj: { cash: 0, gold: -6, index: 8,   hightech: 10  } },
+        ],
+    },
+
+    // テック規制 → ハイテクのみ暴落、ゴールド小幅上昇
+    techRegulation: {
+        label: "テック大規制", emoji: "⚖️",
+        baseEffect: { cash: 0, gold: 5, index: -5, hightech: -26 },
+        subjects: ["EU欧州委員会のデジタル規制当局", "米国司法省（DOJ）の独禁部門",
+                   "中国国家市場監督管理総局", "G7テック規制調整会議"],
+        predicates: ["が大手テック企業への歴史的な巨額罰金と事業分割命令を下し",
+                     "がAIの商業利用に厳格な規制を課すことを正式決定し",
+                     "がビッグテックの市場独占に対する強制解体命令を発動し"],
+        modifiers: [
+            { text: "ハイテク株への売りが止まらず、ゴールドに小幅な買いが入っています。", adj: { cash: 0, gold: 4,  index: -3, hightech: -10 } },
+            { text: "プラットフォーム企業が壊滅的な打撃を受けています。",             adj: { cash: 0, gold: 5,  index: -4, hightech: -14 } },
+            { text: "ただし規制内容は予想より緩く市場は過剰反応の可能性もあります。",  adj: { cash: 0, gold: -3, index: 2,  hightech: 8   } },
+        ],
+    },
+
+    // エネルギー危機 → 有事的ゴールド上昇、株は下落
+    energyCrunch: {
+        label: "エネルギー供給危機", emoji: "🔥",
+        baseEffect: { cash: 0, gold: 20, index: -12, hightech: -12 },
+        subjects: ["OPEC＋連合", "サウジアラムコ", "ロシア・ガスプロム",
+                   "北海油田群", "主要LNG輸出拠点"],
+        predicates: ["が予告なしの大幅減産を電撃発表し",
+                     "が精製施設への大規模テロ攻撃を受け全面停止し",
+                     "が経済制裁への対抗措置として輸出停止を宣言し"],
+        modifiers: [
+            { text: "供給不安でゴールドが安全資産として買われています。",             adj: { cash: 0, gold: 8,  index: -5, hightech: -5  } },
+            { text: "エネルギーコスト急騰で企業収益が圧迫され株は下落しています。",   adj: { cash: 0, gold: 6,  index: -6, hightech: -8  } },
+            { text: "しかし代替供給源の確保が予想以上に早く進んでいます。",          adj: { cash: 0, gold: -8, index: 4,  hightech: 3   } },
+        ],
+    },
+
+    // ゴールド急落 → ゴールドのみ暴落、株は上昇（ドル急騰局面）
+    goldCrash: {
+        label: "ドル急騰・ゴールド急落", emoji: "💵",
+        baseEffect: { cash: 0, gold: -28, index: 5, hightech: 6 },
+        subjects: ["ドル指数（DXY）", "米国財務省証券への需要",
+                   "中央銀行の金売却", "ゴールドETFからの大規模流出",
+                   "商品ファンドの強制ポジション解消"],
+        predicates: ["が急騰しゴールドが急落し",
+                     "が世界中の安全資産となりゴールドが売られ",
+                     "が大規模な金売却を発表し市場を驚かせ",
+                     "が連鎖的に起きゴールドの売りが止まらず"],
+        modifiers: [
+            { text: "ゴールドは「有事の金」ではなく売られる資産となっています。",     adj: { cash: 0, gold: -12, index: 3,  hightech: 4  } },
+            { text: "ドル一強でゴールドと新興国が同時に売られています。",             adj: { cash: 0, gold: -10, index: -4, hightech: -3 } },
+            { text: "しかし売り過ぎとの見方も出て底値を探る動きもあります。",         adj: { cash: 0, gold: 8,   index: 2,  hightech: 3  } },
+        ],
+    },
+};
+
+/* ================================================================
+   サブニュースDB（小さな値動き、市場のノイズ）
+   baseEffectは省略（0扱い）、modifiers の adj で方向を決定
+   ================================================================ */
+const SUB_DB = {
+
+    minorEarnings: {
+        label: "企業決算", emoji: "📊",
+        subjects: ["Salesforce", "Oracle", "SAP", "Shopify", "Zoom", "Palo Alto Networks",
+                   "Snowflake", "Twilio", "HubSpot", "Workday", "CrowdStrike", "Datadog"],
+        predicates: ["が市場予想をわずかに上回る決算を発表し",
+                     "が若干予想を下回る決算を発表し",
+                     "が堅調な四半期業績を公表し",
+                     "が来期の慎重な見通しを示し"],
+        modifiers: [
+            { text: "ハイテク株全体に小幅な買いが入っています。",     adj: { cash: 0, gold: -1, index: 1,  hightech: 4  } },
+            { text: "同業他社株も連れ高しています。",                 adj: { cash: 0, gold: -1, index: 1,  hightech: 3  } },
+            { text: "株価は小幅下落で反応しました。",                 adj: { cash: 0, gold: 1,  index: -1, hightech: -4 } },
+            { text: "市場への影響はほぼ軽微でした。",                 adj: { cash: 0, gold: 0,  index: 0,  hightech: 1  } },
+        ],
+    },
+
+    analystNote: {
+        label: "アナリスト格付け", emoji: "🔍",
+        subjects: ["ゴールドマン・サックス", "モルガン・スタンレー", "JPモルガン",
+                   "BofA証券", "シティグループ", "バークレイズ", "UBS", "野村証券"],
+        predicates: ["がハイテクセクターを「オーバーウェイト」に格上げし",
+                     "がAI・半導体株の目標株価を大幅に引き上げ",
+                     "がハイテクセクターを「アンダーウェイト」に格下げし",
+                     "がゴールドの目標価格を引き上げ",
+                     "がインデックス目標を年末に向けて上方修正し"],
+        modifiers: [
+            { text: "小幅な株価上昇が見られています。",               adj: { cash: 0, gold: 0,  index: 1,  hightech: 4  } },
+            { text: "機関投資家の追随買いが期待されます。",           adj: { cash: 0, gold: 0,  index: 2,  hightech: 5  } },
+            { text: "ゴールドが小幅上昇しています。",                 adj: { cash: 0, gold: 4,  index: 0,  hightech: 0  } },
+            { text: "小幅な株価下落が起きています。",                 adj: { cash: 0, gold: 1,  index: -1, hightech: -4 } },
+        ],
+    },
+
+    consumerData: {
+        label: "消費者動向", emoji: "🛒",
+        subjects: ["米小売売上高月次データ", "消費者信頼感指数",
+                   "Amazonの月間売上トレンド", "クレジットカード支出統計",
+                   "ミシガン大学消費者調査"],
+        predicates: ["が予想をわずかに上回り消費の強さを示し",
+                     "が若干の弱含みを示し消費の息切れを示唆し",
+                     "が横ばいで大きな変化がなく"],
+        modifiers: [
+            { text: "インデックスに小幅なプラス材料となっています。",   adj: { cash: 0, gold: -1, index: 3,  hightech: 2  } },
+            { text: "インデックスに軽微なマイナス材料です。",           adj: { cash: 0, gold: 1,  index: -2, hightech: -1 } },
+            { text: "市場への影響は中立です。",                        adj: { cash: 0, gold: 0,  index: 1,  hightech: 0  } },
+        ],
+    },
+
+    techWhisper: {
+        label: "テック業界の噂", emoji: "🤫",
+        subjects: ["AppleのAR/VR次期機種", "Googleの秘密研究プロジェクト",
+                   "Microsoftの社内開発情報", "OpenAIの次世代モデル",
+                   "Metaの新ハードウェア計画", "Teslaの新型FSD（自動運転）",
+                   "Appleの折りたたみiPhone"],
+        predicates: ["について複数の内部情報筋が詳細を明かし",
+                     "の試作品の動画がオンラインにリークされ",
+                     "の研究論文が事前公開され業界を騒がせており",
+                     "の特許申請が新機能の存在を示唆し"],
+        modifiers: [
+            { text: "ハイテク株への期待感が高まっています。",          adj: { cash: 0, gold: -1, index: 0,  hightech: 5  } },
+            { text: "一部の投資家は懐疑的ですが株価は小幅上昇しています。", adj: { cash: 0, gold: 0, index: 0, hightech: 3 } },
+            { text: "期待外れの内容でハイテク株が軽微に下落しています。", adj: { cash: 0, gold: 1, index: 0, hightech: -3 } },
+        ],
+    },
+
+    goldFlow: {
+        label: "ゴールド資金動向", emoji: "🏅",
+        subjects: ["ゴールドETFへの純資金流入状況", "中央銀行の金購入・売却動向",
+                   "金先物取引所の建玉データ", "金採掘大手の月次生産レポート",
+                   "世界の金需要統計（WGC）", "金地金の現物需要"],
+        predicates: ["が強い買い越しを示し",
+                     "が売り越しに転じており",
+                     "が予想を大きく上回り",
+                     "が高水準を維持し"],
+        modifiers: [
+            { text: "金価格に小幅な上昇圧力がかかっています。",        adj: { cash: 0, gold: 3,  index: 0, hightech: 0 } },
+            { text: "ゴールドが小幅上昇しています。",                   adj: { cash: 0, gold: 4,  index: 0, hightech: 0 } },
+            { text: "金価格に小幅な下落圧力がかかっています。",         adj: { cash: 0, gold: -3, index: 0, hightech: 0 } },
+            { text: "ゴールドが小幅下落しています。",                   adj: { cash: 0, gold: -4, index: 0, hightech: 0 } },
+            { text: "市場への影響は限定的でした。",                     adj: { cash: 0, gold: 1,  index: 0, hightech: 0 } },
+        ],
+    },
+
+    minorGeo: {
+        label: "地政学（軽微）", emoji: "🌐",
+        subjects: ["アフリカの産油国情勢", "南米の資源地帯動向",
+                   "東アジアの貿易摩擦", "欧州の関税交渉",
+                   "中東の外交ルート"],
+        predicates: ["で小規模な衝突が発生し一時緊張が高まり",
+                     "の外交関係がやや悪化し懸念が広がり",
+                     "で予想外の外交的進展があり緊張が緩和し"],
+        modifiers: [
+            { text: "ゴールドと株式市場に小幅な影響が出ています。",     adj: { cash: 0, gold: 2,  index: -1, hightech: -1 } },
+            { text: "市場への影響は軽微です。",                         adj: { cash: 0, gold: 1,  index: -1, hightech: 0  } },
+            { text: "緊張緩和でリスクオンムードが高まっています。",      adj: { cash: 0, gold: -2, index: 2,  hightech: 1  } },
+        ],
+    },
+
+    laborData: {
+        label: "雇用・労働市場", emoji: "👷",
+        subjects: ["週次の失業保険申請件数", "ADP雇用レポート",
+                   "求人件数統計（JOLTS）", "賃金成長率の月次データ",
+                   "労働参加率"],
+        predicates: ["が予想より若干良好な数値を示し",
+                     "がわずかに悪化し",
+                     "が市場予想と概ね一致し"],
+        modifiers: [
+            { text: "インデックスに小幅なプラス材料となっています。",   adj: { cash: 0, gold: -1, index: 2,  hightech: 1  } },
+            { text: "インデックスに軽微なマイナス材料です。",           adj: { cash: 0, gold: 1,  index: -2, hightech: -1 } },
+            { text: "市場の反応は極めて限定的でした。",                 adj: { cash: 0, gold: 0,  index: 1,  hightech: 0  } },
+        ],
+    },
+
+    currencyMove: {
+        label: "為替・通貨", emoji: "💱",
+        subjects: ["ドル円相場", "ユーロドル相場", "英ポンドドル",
+                   "人民元相場", "ドル指数（DXY）"],
+        predicates: ["が小幅なドル高に動き",
+                     "が小幅なドル安に傾き",
+                     "がボラタイルな動きの後に概ね横ばいとなり"],
+        modifiers: [
+            { text: "ドル安でゴールドが小幅上昇しています。",           adj: { cash: 0, gold: 3,  index: 1,  hightech: 1  } },
+            { text: "ドル高でゴールドが小幅下落しています。",           adj: { cash: 0, gold: -3, index: -1, hightech: -1 } },
+            { text: "市場への影響は軽微です。",                         adj: { cash: 0, gold: 1,  index: 0,  hightech: 0  } },
+        ],
+    },
+
+    maRumor: {
+        label: "M&A・合併噂", emoji: "🤝",
+        subjects: ["テック大手のスタートアップ買収", "半導体業界の業界再編",
+                   "AIスタートアップのIPO観測", "クラウド企業の垂直統合",
+                   "ビッグテックのゲーム会社買収"],
+        predicates: ["についての買収観測が業界紙に報道され",
+                     "の合併交渉が進展しているとロイターが報じ",
+                     "のIPO準備が最終段階に入ったと伝えられ"],
+        modifiers: [
+            { text: "関連ハイテク株が小幅上昇しています。",             adj: { cash: 0, gold: 0,  index: 1,  hightech: 4  } },
+            { text: "セクター全体の再評価につながる可能性があります。",  adj: { cash: 0, gold: 0,  index: 1,  hightech: 3  } },
+            { text: "実現可能性は低いとの冷静な見方もあります。",       adj: { cash: 0, gold: 0,  index: 0,  hightech: 2  } },
+        ],
+    },
+
+    regulationMinor: {
+        label: "規制動向（軽微）", emoji: "⚖️",
+        subjects: ["EUのデジタル規制動向", "米FTCの調査状況",
+                   "中国のテック規制の最新動向", "日本の独禁法改正議論"],
+        predicates: ["が特定企業への軽微な警告を発し",
+                     "が業界調査を開始したものの範囲は限定的で",
+                     "が規制内容を予想より緩い水準で決定し"],
+        modifiers: [
+            { text: "ハイテク株への影響は軽微にとどまっています。",      adj: { cash: 0, gold: 1,  index: 0,  hightech: -3 } },
+            { text: "予想より緩い内容でハイテク株が小幅上昇しています。", adj: { cash: 0, gold: -1, index: 0,  hightech: 3  } },
+            { text: "市場の反応は冷静で小幅な動きにとどまりました。",    adj: { cash: 0, gold: 0,  index: 0,  hightech: -1 } },
+        ],
+    },
+
+    supplyChain: {
+        label: "サプライチェーン", emoji: "🚢",
+        subjects: ["半導体部品の供給不足", "海上コンテナ不足の長期化",
+                   "自動車部品の調達難", "電子部品メーカーの生産調整",
+                   "航空輸送コストの急騰"],
+        predicates: ["が長期化し企業収益を圧迫し",
+                     "が改善に向かい生産正常化が進み",
+                     "が深刻化しハイテク製品の供給不安が高まり"],
+        modifiers: [
+            { text: "インデックスとハイテク株に軽微な悪材料です。",      adj: { cash: 0, gold: 2,  index: -2, hightech: -3 } },
+            { text: "解消に向かいインデックスに小幅好材料です。",        adj: { cash: 0, gold: -1, index: 2,  hightech: 2  } },
+            { text: "ハイテク株に軽微な打撃が出ています。",              adj: { cash: 0, gold: 1,  index: -1, hightech: -3 } },
+        ],
+    },
+
+    socialTrend: {
+        label: "テック・社会トレンド", emoji: "📱",
+        subjects: ["TikTokの月次アクティブユーザー数", "AIツールの普及率調査",
+                   "スマートフォン世界出荷台数", "半導体需要調査レポート",
+                   "クラウドサービス採用調査"],
+        predicates: ["が業界予測を若干上回り堅調さを示し",
+                     "が期待をやや下回り鈍化懸念が浮上し",
+                     "が新技術サイクルの到来を示唆する数値を公表し"],
+        modifiers: [
+            { text: "ハイテク株に緩やかな買い材料となっています。",      adj: { cash: 0, gold: -1, index: 1,  hightech: 4  } },
+            { text: "需要鈍化の懸念でハイテク株が小幅軟化しています。",  adj: { cash: 0, gold: 1,  index: -1, hightech: -3 } },
+            { text: "市場の受け止め方は中立的でした。",                  adj: { cash: 0, gold: 0,  index: 0,  hightech: 1  } },
+        ],
+    },
+
+    propertyMarket: {
+        label: "不動産・建設", emoji: "🏗️",
+        subjects: ["米住宅着工件数", "米中古住宅販売件数",
+                   "商業用不動産の空室率", "建設資材・コスト指数"],
+        predicates: ["が小幅に改善しマクロ経済への安心感を与え",
+                     "が若干悪化し景気の息切れ感が広がり",
+                     "が横ばいで大きな方向感がなく"],
+        modifiers: [
+            { text: "インデックスに軽微な好材料となっています。",        adj: { cash: 0, gold: 0, index: 2,  hightech: 0  } },
+            { text: "インデックスに軽微な悪材料となっています。",        adj: { cash: 0, gold: 1, index: -2, hightech: 0  } },
+            { text: "市場への影響はほぼありませんでした。",              adj: { cash: 0, gold: 0, index: 1,  hightech: 0  } },
+        ],
+    },
+
+    emergingMarket: {
+        label: "新興国動向", emoji: "🌏",
+        subjects: ["インドの月次製造業PMI", "ブラジルの経済指標",
+                   "東南アジアの製造業受注", "中国の消費者物価データ",
+                   "アフリカの資源開発進捗"],
+        predicates: ["が予想を上回る力強さを示し",
+                     "が弱含みで新興国リスクへの警戒感が高まり",
+                     "が中立的な内容にとどまり"],
+        modifiers: [
+            { text: "グローバル株（インデックス）に軽微な好材料です。",  adj: { cash: 0, gold: -1, index: 2,  hightech: 0  } },
+            { text: "リスクオフでインデックスが小幅軟化しています。",    adj: { cash: 0, gold: 2,  index: -2, hightech: -1 } },
+            { text: "全体市場への影響は中立的でした。",                  adj: { cash: 0, gold: 0,  index: 1,  hightech: 0  } },
+        ],
+    },
+
+    semiconductorData: {
+        label: "半導体需給", emoji: "🔬",
+        subjects: ["世界半導体出荷統計（WSTS）", "台湾TSMCの月次売上",
+                   "韓国サムスンのメモリ出荷データ", "エヌビディアのデータセンター受注"],
+        predicates: ["が予想以上の強さを示し需要の底堅さを確認し",
+                     "が在庫調整の長期化を示唆し",
+                     "が次の需要サイクル入りを示す指標となり"],
+        modifiers: [
+            { text: "半導体株を中心にハイテク株が小幅上昇しています。",  adj: { cash: 0, gold: -1, index: 1,  hightech: 5  } },
+            { text: "在庫懸念でハイテク株が小幅軟化しています。",        adj: { cash: 0, gold: 1,  index: -1, hightech: -4 } },
+            { text: "需要回復の期待で市場はポジティブに反応しています。", adj: { cash: 0, gold: 0,  index: 1,  hightech: 3  } },
+        ],
+    },
+};
+
+/* ================================================================
+   信頼度（フェイクニュース）
+   メイン: 80%確実 / 15%噂 / 5%怪情報
+   サブ:   55%確実 / 30%噂 / 15%怪情報
+   ================================================================ */
+function pickMainRel() {
+    const r = Math.random();
+    if (r < 0.05) return { value: 0.2, label: '怪情報（信頼度20%）', css: 'rel-low', badgeCss: 'rel-low-badge' };
+    if (r < 0.20) return { value: 0.5, label: '噂（信頼度50%）',     css: 'rel-med', badgeCss: 'rel-med-badge' };
+    return             { value: 1.0, label: null,                    css: 'rel-high', badgeCss: null };
+}
+function pickSubRel() {
+    const r = Math.random();
+    if (r < 0.15) return { value: 0.2, label: '怪情報（信頼度20%）', css: 'rel-low', badgeCss: 'rel-low-badge' };
+    if (r < 0.45) return { value: 0.5, label: '噂（信頼度50%）',     css: 'rel-med', badgeCss: 'rel-med-badge' };
+    return             { value: 1.0, label: null,                    css: 'rel-high', badgeCss: null };
+}
+
+/* ================================================================
+   ニュース生成
+   ================================================================ */
+function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function buildNews(db, reliabilityFn) {
+    const catKey = rnd(Object.keys(db));
+    const cat    = db[catKey];
+    const subj   = rnd(cat.subjects);
+    const pred   = rnd(cat.predicates);
+    const mod    = rnd(cat.modifiers);
+    const rel    = reliabilityFn();
+    const statedEffects = {};
+    ASSETS.forEach(id => {
+        statedEffects[id] = ((cat.baseEffect?.[id] || 0) + (mod.adj[id] || 0));
+    });
+    return { label: cat.label, emoji: cat.emoji, body: subj + pred + mod.text, rel, statedEffects, wasReal: null };
+}
+
+function generateMonthlyNews() {
+    return {
+        main: buildNews(MAIN_DB, pickMainRel),
+        sub:  Array.from({ length: 4 + Math.floor(Math.random() * 3) }, () => buildNews(SUB_DB, pickSubRel)),
+    };
+}
+
+/* ================================================================
+   ゲーム状態
+   ================================================================ */
+let currentNews = { main: null, sub: [] };
+
+function makeState() {
+    return {
+        month:      1,
+        total:      INITIAL,
+        allocs:     { cash: 25, gold: 25, index: 25, hightech: 25 },
+        vals:       { cash: 2_500_000, gold: 2_500_000, index: 2_500_000, hightech: 2_500_000 },
+        priceIndex: { cash: 100, gold: 100, index: 100, hightech: 100 },
+        lastChange: { cash: 0, gold: 0, index: 0, hightech: 0 },
+    };
+}
+let state = makeState();
+
+function fmt(n) { return '¥' + Math.round(n).toLocaleString('ja-JP'); }
+
+/* ================================================================
+   スコア管理
+   ================================================================ */
+function loadScores() {
+    try { return JSON.parse(localStorage.getItem(SCORE_KEY)) || []; } catch { return []; }
+}
+function saveScore() {
+    const scores = loadScores();
+    scores.unshift({ date: new Date().toLocaleDateString('ja-JP'), total: state.total,
+                     pctRaw: (state.total - INITIAL) / INITIAL * 100, emoji: rankEmoji(state.total / INITIAL) });
+    localStorage.setItem(SCORE_KEY, JSON.stringify(scores.slice(0, 10)));
+}
+function rankEmoji(r) {
+    if (r >= 3.0) return '🏆'; if (r >= 2.0) return '🥇'; if (r >= 1.5) return '🥈';
+    if (r >= 1.0) return '✅'; if (r >= 0.7) return '📉'; return '💀';
+}
+function renderScoreBoard() {
+    const scores = loadScores();
+    const el = document.getElementById('score-board');
+    if (!scores.length) { el.style.display = 'none'; return; }
+    el.style.display = 'block';
+    const best = Math.max(...scores.map(s => s.total));
+    const avg  = scores.reduce((a, s) => a + s.total, 0) / scores.length;
+    const pb   = ((best - INITIAL) / INITIAL * 100).toFixed(0);
+    const pa   = ((avg  - INITIAL) / INITIAL * 100).toFixed(0);
+    const recent = scores.slice(0, 6).map(s => s.emoji).join(' ');
+    const col = n => parseFloat(n) >= 0 ? '#3fb950' : '#f85149';
+    const sgn = n => parseFloat(n) >= 0 ? '+' : '';
+    document.getElementById('sb-inner').innerHTML = `
+        <div class="sb-stat"><div class="sb-label">🏆 ベスト</div><div class="sb-val" style="color:${col(pb)}">${sgn(pb)}${pb}%</div></div>
+        <div class="sb-stat"><div class="sb-label">📊 平均</div><div class="sb-val" style="color:${col(pa)}">${sgn(pa)}${pa}%</div></div>
+        <div class="sb-stat"><div class="sb-label">🎮 プレイ数</div><div class="sb-val">${scores.length} 回</div></div>
+        <div class="sb-stat"><div class="sb-label">直近結果</div><div class="sb-recent">${recent}</div></div>`;
+}
+
+/* ================================================================
+   表示：ニュース
+   ================================================================ */
+// 確定後：このニュースが実際に各資産へどれだけ寄与したかを表示
+function buildContribution(n) {
+    const names = { gold: 'ゴールド', index: 'インデックス', hightech: 'ハイテク' };
+    const parts = ['gold', 'index', 'hightech']
+        .filter(id => Math.abs(n.appliedEffects[id]) >= 0.1)
+        .map(id => {
+            const v = n.appliedEffects[id];
+            const s = v > 0 ? '+' : '';
+            return `<span class="contrib-item ${v > 0 ? 'contrib-pos' : 'contrib-neg'}">${names[id]} ${s}${v.toFixed(1)}%</span>`;
+        });
+    return parts.length
+        ? `<div class="ni-contrib"><span class="contrib-label">📊 寄与</span>${parts.join('')}</div>`
+        : `<div class="ni-contrib"><span class="contrib-none">📊 市場への寄与はほぼなし</span></div>`;
+}
+
+function newsItemHTML(n, isMain, revealed) {
+    const catCls = isMain ? 'ni-cat-main' : 'ni-cat-sub';
+    const relB   = n.rel.label ? `<span class="rel-badge ${n.rel.badgeCss}">⚠️ ${n.rel.label}</span>` : '';
+    const vB     = revealed && n.wasReal !== null
+        ? `<span class="verdict-badge ${n.wasReal ? 'vb-true' : 'vb-false'}">${n.wasReal ? '✓ 本当でした' : '✗ 嘘でした！'}</span>`
+        : '';
+    const contrib = revealed && n.appliedEffects ? buildContribution(n) : '';
+    return `
+        <div class="ni-header"><span class="${catCls}">${n.emoji} ${n.label}</span>${relB}${vB}</div>
+        <div class="ni-body">${n.body}</div>
+        ${contrib}`;
+}
+
+function renderNews(revealed = false) {
+    document.getElementById('news-header-month').textContent = `📰 MONTH ${state.month} / ${MAX_MONTHS} のニュース`;
+    const { main, sub } = currentNews;
+
+    const mDiv = document.getElementById('main-news-container');
+    const mc   = document.createElement('div');
+    mc.className = `main-news-card ${main.rel.css}`;
+    if (revealed && main.wasReal !== null) mc.classList.add(main.wasReal ? 'verdict-true' : 'verdict-false');
+    mc.innerHTML = newsItemHTML(main, true, revealed);
+    mDiv.innerHTML = '';
+    mDiv.appendChild(mc);
+
+    document.getElementById('sub-count').textContent = `${sub.length}件`;
+    const list = document.getElementById('sub-news-list');
+    list.innerHTML = '';
+    sub.forEach(n => {
+        const d = document.createElement('div');
+        d.className = `sub-news-item ${n.rel.css}`;
+        if (revealed && n.wasReal !== null) d.classList.add(n.wasReal ? 'verdict-true' : 'verdict-false');
+        d.innerHTML = newsItemHTML(n, false, revealed);
+        list.appendChild(d);
+    });
+}
+
+/* ================================================================
+   表示：資産グリッド
+   ================================================================ */
+function renderAssetGrid() {
+    const grid = document.getElementById('asset-idx-grid');
+    grid.innerHTML = '';
+    ASSETS.forEach(id => {
+        const meta   = ASSET_META[id];
+        const chg    = state.lastChange[id];
+        const idx    = state.priceIndex[id];
+        const sign   = chg > 0 ? '+' : '';
+        const chgColor = chg > 0 ? '#3fb950' : chg < 0 ? '#f85149' : '#8b949e';
+        const chgStr = id === 'cash' ? '🛡️ 常時0%' : chg !== 0 ? sign + chg.toFixed(1) + '%' : '——';
+        const card = document.createElement('div');
+        card.className = 'ai-card';
+        card.innerHTML = `
+            <div class="ai-name" style="color:${meta.color}">${meta.icon} ${meta.name}</div>
+            <div class="ai-value">${fmt(state.vals[id])}</div>
+            <div class="ai-chg" style="color:${id === 'cash' ? '#8b949e' : chgColor}">${chgStr}</div>
+            <div class="ai-index">指数 <strong>${idx.toFixed(1)}</strong></div>`;
+        grid.appendChild(card);
+    });
+}
+
+/* ================================================================
+   表示：ステータスバー
+   ================================================================ */
+function updateStatus() {
+    document.getElementById('month-display').textContent = `${state.month} / ${MAX_MONTHS}`;
+    document.getElementById('total-display').textContent = fmt(state.total);
+    const pnl = state.total - INITIAL;
+    const el  = document.getElementById('pnl-display');
+    if (pnl > 0)      { el.textContent = '+' + fmt(pnl); el.className = 'status-value val-positive'; }
+    else if (pnl < 0) { el.textContent = fmt(pnl);        el.className = 'status-value val-negative'; }
+    else              { el.textContent = '± ¥0';           el.className = 'status-value val-neutral';  }
+}
+
+/* ================================================================
+   スライダー操作
+   ================================================================ */
+function onSlider(id) {
+    const v = parseInt(document.getElementById(`slider-${id}`).value, 10);
+    state.allocs[id] = v;
+    document.getElementById(`sv-${id}`).textContent  = v + '%';
+    document.getElementById(`sbg-${id}`).style.width = v + '%';
+    refreshTotal();
+}
+function refreshTotal() {
+    const sum = ASSETS.reduce((a, id) => a + state.allocs[id], 0);
+    const el  = document.getElementById('total-pct');
+    el.textContent = sum + '%';
+    el.className   = 'total-value ' + (sum === 100 ? 'total-ok' : 'total-warn');
+    document.getElementById('btn-next').disabled = (sum !== 100);
+}
+
+/* ================================================================
+   ゲームロジック：nextMonth
+   ================================================================ */
+function nextMonth() {
+    const btn = document.getElementById('btn-next');
+    btn.disabled = true;
+
+    const { main, sub } = currentNews;
+    const combined = { cash: 0, gold: 0, index: 0, hightech: 0 };
+
+    // メインニュース解決（appliedEffects = 実際の寄与）
+    main.wasReal = Math.random() < main.rel.value;
+    const mMult  = main.wasReal ? 1 : -1;
+    main.appliedEffects = {};
+    ASSETS.forEach(id => {
+        const e = main.statedEffects[id] * mMult;
+        main.appliedEffects[id] = e;
+        combined[id] += e;
+    });
+
+    // サブニュース解決
+    sub.forEach(n => {
+        n.wasReal = Math.random() < n.rel.value;
+        const mult = n.wasReal ? 1 : -1;
+        n.appliedEffects = {};
+        ASSETS.forEach(id => {
+            const e = n.statedEffects[id] * mult;
+            n.appliedEffects[id] = e;
+            combined[id] += e;
+        });
+    });
+
+    // 背景ドリフト加算、現金は絶対0
+    ASSETS.forEach(id => { combined[id] += DRIFT[id]; });
+    combined.cash = 0;
+
+    // リバランス → 価格変動適用
+    ASSETS.forEach(id => { state.vals[id] = state.total * (state.allocs[id] / 100); });
+    ASSETS.forEach(id => {
+        const rate            = combined[id] / 100;
+        state.vals[id]       *= (1 + rate);
+        state.priceIndex[id] *= (1 + rate);
+        state.lastChange[id]  = combined[id];
+    });
+    state.total = ASSETS.reduce((sum, id) => sum + state.vals[id], 0);
+
+    renderNews(true);
+    updateStatus();
+    renderAssetGrid();
+
+    if (!main.wasReal) {
+        addLog(`<span class="log-month">[${state.month}月]</span> 🎭 <span style="color:#f85149">メインニュース「${main.emoji}${main.label}」はフェイクでした！</span>`);
+    }
+    const fakeSubs = sub.filter(n => !n.wasReal);
+    if (fakeSubs.length) {
+        addLog(`<span class="log-month">[${state.month}月]</span> 🎭 <span style="color:#ffa657">サブフェイク: ${fakeSubs.map(n => n.emoji + n.label).join(' / ')}</span>`);
+    }
+    const cp = ASSETS.map(id => {
+        const v = combined[id]; const s = v > 0 ? '+' : ''; const c = v > 0 ? '#3fb950' : v < 0 ? '#f85149' : '#8b949e';
+        return `<span style="color:${c}">${id === 'cash' ? '0.0%' : s + v.toFixed(1) + '%'}</span>`;
+    });
+    addLog(`<span class="log-month">[${state.month}月]</span> 💴${cp[0]} 💛${cp[1]} 🌍${cp[2]} 💻${cp[3]}`);
+
+    if (state.month >= MAX_MONTHS) {
+        setTimeout(() => { saveScore(); showGameOver(); }, 2000);
+        return;
+    }
+    setTimeout(() => {
+        state.month++;
+        currentNews = generateMonthlyNews();
+        updateStatus();
+        renderNews(false);
+        renderAssetGrid();
+        btn.disabled = false;
+    }, 2000);
+}
+
+function addLog(html) {
+    const log   = document.getElementById('event-log');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = html;
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+}
+
+/* ================================================================
+   ゲームオーバー
+   ================================================================ */
+function showGameOver() {
+    document.getElementById('game-area').style.display = 'none';
+    const screen = document.getElementById('game-over-screen');
+    screen.style.display = 'block';
+
+    const pnl    = state.total - INITIAL;
+    const pnlPct = ((pnl / INITIAL) * 100).toFixed(1);
+    const sign   = pnl >= 0 ? '+' : '';
+    const color  = pnl >= 0 ? '#3fb950' : '#f85149';
+    const ratio  = state.total / INITIAL;
+    const emoji  = rankEmoji(ratio);
+    let rank, title;
+    if (ratio >= 3.0)      { rank = 'LEGENDARY'; title = '伝説のファンドマネージャー'; }
+    else if (ratio >= 2.0) { rank = 'MASTER';    title = '達人の資産運用家'; }
+    else if (ratio >= 1.5) { rank = 'EXPERT';    title = '優秀な投資家'; }
+    else if (ratio >= 1.0) { rank = 'SURVIVOR';  title = '資産を守り抜いた'; }
+    else if (ratio >= 0.7) { rank = 'LOSER';     title = '資産が目減りした'; }
+    else                   { rank = 'BANKRUPT';  title = '資産を溶かした'; }
+
+    const scores = loadScores();
+    const best   = Math.max(...scores.map(s => s.total));
+    const avg    = scores.reduce((a, s) => a + s.total, 0) / scores.length;
+    const pb     = ((best - INITIAL) / INITIAL * 100).toFixed(0);
+    const pa     = ((avg  - INITIAL) / INITIAL * 100).toFixed(0);
+    const colC   = n => parseFloat(n) >= 0 ? '#3fb950' : '#f85149';
+    const sgnC   = n => parseFloat(n) >= 0 ? '+' : '';
+    const histRows = scores.map(s => {
+        const sp = s.pctRaw >= 0 ? '+' : ''; const sc = s.pctRaw >= 0 ? '#3fb950' : '#f85149';
+        const ib = s.total === best ? 'gh-best' : '';
+        return `<div class="gh-row ${ib}"><span class="gh-date">${s.date}</span><span class="gh-rank">${s.emoji}</span><span class="gh-amount">${fmt(s.total)}</span><span class="gh-pct" style="color:${sc}">${sp}${s.pctRaw.toFixed(0)}%</span></div>`;
+    }).join('');
+
+    screen.innerHTML = `
+        <div class="go-card">
+            <div class="go-emoji">${emoji}</div>
+            <div class="go-rank">${rank}</div>
+            <div class="go-title" style="color:${color}">${title}</div>
+            <div class="go-sub">12か月の運用成績</div>
+            <div class="go-amount" style="color:${color}">${fmt(state.total)}</div>
+            <div class="go-pnl" style="color:${color}">${sign}${fmt(pnl)}（${sign}${pnlPct}%）</div>
+            <div class="go-initial">初期資産 ${fmt(INITIAL)}</div>
+            <div class="go-stats">
+                <div class="gs-item"><div class="gs-label">🏆 ベスト</div><div class="gs-val" style="color:${colC(pb)}">${sgnC(pb)}${pb}%</div></div>
+                <div class="gs-item"><div class="gs-label">📊 平均</div><div class="gs-val" style="color:${colC(pa)}">${sgnC(pa)}${pa}%</div></div>
+                <div class="gs-item"><div class="gs-label">🎮 総回数</div><div class="gs-val">${scores.length} 回</div></div>
+            </div>
+            <div class="go-history"><div class="gh-title">📋 過去の記録（最大10回）</div>${histRows}</div>
+            <div class="go-btns">
+                <button class="btn-restart" onclick="startGame()">🔄 もう一度プレイ</button>
+                <button class="btn-title" onclick="showTitle()">🏠 タイトルへ</button>
+            </div>
+        </div>`;
+    renderScoreBoard();
+}
+
+function renderTitleAssets() {
+    const guide = [
+        { id: 'cash',     d: '値動きゼロ。暴落時の安全な避難先。' },
+        { id: 'gold',     d: '有事・インフレに強い。ハイテクと逆の動き。' },
+        { id: 'index',    d: '毎月じわり成長。危機にはそこそこ下落。' },
+        { id: 'hightech', d: 'ハイリスク・ハイリターン。最も荒い値動き。' },
+    ];
+    document.getElementById('th-assets').innerHTML = guide.map(a => {
+        const m = ASSET_META[a.id];
+        return `<div class="tha-card"><div class="tha-name" style="color:${m.color}">${m.icon} ${m.name}</div><div class="tha-desc">${a.d}</div></div>`;
+    }).join('');
+}
+
+function showTitle() {
+    document.getElementById('title-screen').style.display     = 'block';
+    document.getElementById('game-area').style.display        = 'none';
+    document.getElementById('game-over-screen').style.display = 'none';
+    renderTitleAssets();
+    renderScoreBoard();
+}
+
+function startGame() {
+    state = makeState();
+    document.getElementById('title-screen').style.display     = 'none';
+    document.getElementById('game-over-screen').style.display = 'none';
+    document.getElementById('game-area').style.display        = 'block';
+    document.getElementById('event-log').innerHTML = `
+        <div class="log-header">運用ログ</div>
+        <div class="log-entry"><span class="log-month">[START]</span> 12か月の運用開始！ニュースを読んで配分を決めよう。</div>`;
+    ASSETS.forEach(id => {
+        document.getElementById(`slider-${id}`).value    = 25;
+        document.getElementById(`sv-${id}`).textContent  = '25%';
+        document.getElementById(`sbg-${id}`).style.width = '25%';
+    });
+    currentNews = generateMonthlyNews();
+    updateStatus();
+    refreshTotal();
+    renderNews(false);
+    renderAssetGrid();
+}
+
+/* ================================================================
+   初期化 → タイトル画面から開始
+   ================================================================ */
+showTitle();
+</script>
+</body>
+</html>
