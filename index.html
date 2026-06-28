@@ -18,7 +18,8 @@
         /* タイトル画面 */
         .title-hero { text-align: center; background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 26px 20px; margin-bottom: 12px; }
         .th-emoji { font-size: 50px; margin-bottom: 6px; }
-        .th-name  { font-size: 26px; font-weight: 900; color: #58a6ff; margin-bottom: 12px; }
+        .th-name  { font-size: 26px; font-weight: 900; color: #58a6ff; margin-bottom: 4px; }
+        .th-ver   { font-size: 12px; font-weight: 700; color: #6e7681; letter-spacing: 1px; margin-bottom: 12px; }
         .th-desc  { font-size: 13px; color: #8b949e; line-height: 1.8; }
         .th-desc strong { color: #e6edf3; }
         .btn-start { width: 100%; padding: 16px; background: linear-gradient(135deg, #1f6feb, #388bfd); border: none; border-radius: 14px; color: #fff; font-size: 18px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; }
@@ -39,7 +40,11 @@
         .sb-recent { font-size: 15px; letter-spacing: 2px; }
 
         /* ステータスバー */
-        .status-bar { display: grid; grid-template-columns: 1fr 2fr 1.5fr; gap: 8px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; }
+        .status-bar { display: grid; grid-template-columns: 1fr 2fr 1.5fr; gap: 8px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px 14px; margin-bottom: 8px; }
+        .mood-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; background: #0f141b; border: 1px solid #21262d; border-radius: 10px; padding: 7px 12px; margin-bottom: 10px; }
+        .mood-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+        .mood-label { font-size: 9px; color: #6e7681; letter-spacing: 0.5px; }
+        .mood-val { font-size: 13px; font-weight: 700; }
         .status-item  { text-align: center; }
         .status-label { font-size: 9px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; }
         .status-value { font-size: 18px; font-weight: 700; margin-top: 2px; }
@@ -104,6 +109,30 @@
         .ai-chg   { font-size: 11px; font-weight: 700; margin-bottom: 3px; min-height: 13px; }
         .ai-index { font-size: 10px; color: #8b949e; background: #0d1117; border-radius: 4px; padding: 2px 4px; }
 
+        /* 現金バナー & 売買カード（ver2.0） */
+        .cash-banner { display: flex; justify-content: space-between; align-items: center; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 11px 16px; margin-bottom: 10px; }
+        .cb-label { font-size: 13px; color: #c9d1d9; font-weight: 700; }
+        .cb-value { font-size: 20px; font-weight: 900; color: #58a6ff; }
+        .trade-msg { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 12px; font-weight: 700; color: #c9d1d9; }
+        .trade-grid { display: flex; flex-direction: column; gap: 9px; margin-bottom: 10px; }
+        .trade-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 11px 13px; }
+        .tc-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+        .tc-name  { font-size: 15px; font-weight: 800; }
+        .tc-price { font-size: 17px; font-weight: 900; color: #e6edf3; }
+        .tc-unit  { font-size: 11px; color: #6e7681; font-weight: 400; }
+        .tc-chg   { font-size: 13px; font-weight: 700; margin-left: 4px; }
+        .tc-info  { font-size: 12px; color: #8b949e; margin-bottom: 9px; }
+        .tc-info b { color: #e6edf3; font-weight: 700; }
+        .tc-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .tc-tag { font-size: 11px; color: #6e7681; }
+        .tc-btn { font-size: 13px; font-weight: 700; font-family: inherit; padding: 6px 11px; border-radius: 8px; cursor: pointer; transition: all 0.12s; }
+        .tc-buy  { background: #16261b; border: 1px solid #238636; color: #3fb950; }
+        .tc-buy:hover  { background: #1c3322; }
+        .tc-sell { background: #2a1618; border: 1px solid #b62324; color: #f85149; }
+        .tc-sell:hover { background: #3a1c1f; }
+        .tc-btn:active { transform: scale(0.95); }
+        .tc-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
         /* スライダー */
         .allocation-panel { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
         .alloc-title { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: 700; }
@@ -155,7 +184,8 @@
         .go-sub     { font-size: 12px; color: #8b949e; margin-bottom: 14px; }
         .go-amount  { font-size: 36px; font-weight: 900; margin-bottom: 4px; }
         .go-pnl     { font-size: 18px; font-weight: 700; margin-bottom: 3px; }
-        .go-initial { font-size: 11px; color: #8b949e; margin-bottom: 18px; }
+        .go-initial { font-size: 11px; color: #8b949e; margin-bottom: 4px; }
+        .go-real    { font-size: 12px; font-weight: 700; margin-bottom: 18px; }
         .go-stats   { display: flex; justify-content: center; gap: 20px; margin-bottom: 16px; }
         .gs-item    { text-align: center; }
         .gs-label   { font-size: 10px; color: #8b949e; margin-bottom: 2px; }
@@ -182,7 +212,8 @@
     <div class="title-hero">
         <div class="th-emoji">📈</div>
         <div class="th-name">マーケット・ディフェンダー</div>
-        <div class="th-desc">初期資産 <strong>1,000万円</strong> を元手に、<br>12か月間の市場を運用せよ。<br>ニュースを読み解き、4つの資産に配分しよう。</div>
+        <div class="th-ver" id="ver-title"></div>
+        <div class="th-desc">初期資産 <strong>1,000万円</strong> を元手に、<br>ニュースを読んで商品を売買し、12か月で資産を増やせ。<br>勝負は<strong>物価を加味した「実質総資産」</strong>。現金のままでは目減りする。</div>
     </div>
     <div class="score-board" id="score-board">
         <div class="sb-title">📋 過去の記録</div>
@@ -195,7 +226,7 @@
 <div id="game-area" style="display:none">
     <div class="header">
         <div class="title">📈 マーケット・ディフェンダー</div>
-        <div class="subtitle">〜 12か月間の市場を生き残れ 〜</div>
+        <div class="subtitle">〜 12か月間の市場を生き残れ 〜 <span id="ver-game"></span></div>
     </div>
     <div class="status-bar">
         <div class="status-item">
@@ -203,13 +234,19 @@
             <div class="status-value val-neutral" id="month-display">1 / 12</div>
         </div>
         <div class="status-item">
-            <div class="status-label">総資産</div>
+            <div class="status-label">総資産（名目）</div>
             <div class="status-value val-neutral" id="total-display">¥10,000,000</div>
         </div>
         <div class="status-item">
-            <div class="status-label">損益</div>
-            <div class="status-value val-neutral" id="pnl-display">± ¥0</div>
+            <div class="status-label">⭐実質総資産</div>
+            <div class="status-value val-neutral" id="real-display">¥10,000,000</div>
         </div>
+    </div>
+
+    <div class="mood-bar">
+        <div class="mood-item"><span class="mood-label">地合い</span><span class="mood-val" id="mood-regime">➖ 中立</span></div>
+        <div class="mood-item"><span class="mood-label">物価（累計）</span><span class="mood-val" id="mood-inflation" style="color:#ffa657">+0.0%</span></div>
+        <div class="mood-item"><span class="mood-label">実質損益</span><span class="mood-val" id="mood-real">+0.0%</span></div>
     </div>
 
     <div class="news-panel">
@@ -220,64 +257,14 @@
         <div class="sub-news-list" id="sub-news-list"></div>
     </div>
 
-    <div class="asset-idx-grid" id="asset-idx-grid"></div>
-
-    <div class="allocation-panel">
-        <div class="alloc-title">資産配分を調整</div>
-
-        <div class="slider-item cash">
-            <div class="slider-header">
-                <span class="slider-label">💴 現金</span>
-                <span class="slider-value" id="sv-cash">25%</span>
-            </div>
-            <div class="slider-track">
-                <div class="slider-bg" id="sbg-cash" style="width:25%"></div>
-                <div class="slider-marks"><div class="slider-mark">0</div><div class="slider-mark">25</div><div class="slider-mark">50</div><div class="slider-mark">75</div><div class="slider-mark">100</div></div>
-                <input type="range" id="slider-cash" min="0" max="100" step="5" value="25" oninput="onSlider('cash')">
-            </div>
-        </div>
-
-        <div class="slider-item gold">
-            <div class="slider-header">
-                <span class="slider-label">💛 ゴールド</span>
-                <span class="slider-value" id="sv-gold">25%</span>
-            </div>
-            <div class="slider-track">
-                <div class="slider-bg" id="sbg-gold" style="width:25%"></div>
-                <div class="slider-marks"><div class="slider-mark">0</div><div class="slider-mark">25</div><div class="slider-mark">50</div><div class="slider-mark">75</div><div class="slider-mark">100</div></div>
-                <input type="range" id="slider-gold" min="0" max="100" step="5" value="25" oninput="onSlider('gold')">
-            </div>
-        </div>
-
-        <div class="slider-item index">
-            <div class="slider-header">
-                <span class="slider-label">🌍 全世界インデックス</span>
-                <span class="slider-value" id="sv-index">25%</span>
-            </div>
-            <div class="slider-track">
-                <div class="slider-bg" id="sbg-index" style="width:25%"></div>
-                <div class="slider-marks"><div class="slider-mark">0</div><div class="slider-mark">25</div><div class="slider-mark">50</div><div class="slider-mark">75</div><div class="slider-mark">100</div></div>
-                <input type="range" id="slider-index" min="0" max="100" step="5" value="25" oninput="onSlider('index')">
-            </div>
-        </div>
-
-        <div class="slider-item hightech">
-            <div class="slider-header">
-                <span class="slider-label">💻 ハイテク株</span>
-                <span class="slider-value" id="sv-hightech">25%</span>
-            </div>
-            <div class="slider-track">
-                <div class="slider-bg" id="sbg-hightech" style="width:25%"></div>
-                <div class="slider-marks"><div class="slider-mark">0</div><div class="slider-mark">25</div><div class="slider-mark">50</div><div class="slider-mark">75</div><div class="slider-mark">100</div></div>
-                <input type="range" id="slider-hightech" min="0" max="100" step="5" value="25" oninput="onSlider('hightech')">
-            </div>
-        </div>
-
-        <div class="alloc-total">
-            <span class="total-label">配分の合計</span>
-            <span class="total-value total-ok" id="total-pct">100%</span>
-        </div>
+    <div class="cash-banner">
+        <span class="cb-label">💴 現金（買付余力）</span>
+        <span class="cb-value" id="cash-display">¥10,000,000</span>
     </div>
+
+    <div class="trade-msg" id="trade-msg" style="display:none"></div>
+
+    <div class="trade-grid" id="trade-grid"></div>
 
     <button class="btn-next" id="btn-next" onclick="nextMonth()">次の月へ →</button>
 
@@ -293,14 +280,21 @@
 /* ================================================================
    定数
    ================================================================ */
+const VERSION    = '2.1';
 const INITIAL    = 10_000_000;
 const MAX_MONTHS = 12;
 const ASSETS     = ['cash', 'gold', 'index', 'hightech'];
-const SCORE_KEY  = 'mdf_v4_scores';
+const TRADEABLE  = ['gold', 'index', 'hightech'];          // 一口単位で売買する商品
+const START_PRICE = { gold: 12_000, index: 18_000, hightech: 6_000 }; // 初期の口価
+const FEE_SELL   = 0.05;                                    // 売却手数料 5%（買付は無料）
+const SCORE_KEY  = 'mdf_v6_scores';                         // 実質総資産で競う
 
 // 毎月の背景ドリフト
 // 現金=0、ゴールド=横ばい微増、インデックス=長期成長+5%、ハイテク=微増
 const DRIFT = { cash: 0, gold: 0.5, index: 5.0, hightech: 1.0 };
+// リアルさ拡張：① 値動きのゆらぎ ② 地合いの持続 ③ インフレ
+const VOL = { cash: 0, gold: 3.0, index: 2.2, hightech: 5.5 }; // 月次ノイズ（標準偏差%）
+const BASE_INFLATION = 0.2;                                    // 月次ベース物価上昇率(%)（年3%前後）
 
 const ASSET_META = {
     cash:     { name: '現金',           icon: '💴', color: '#8b949e' },
@@ -811,16 +805,45 @@ let currentNews = { main: null, sub: [] };
 function makeState() {
     return {
         month:      1,
-        total:      INITIAL,
-        allocs:     { cash: 25, gold: 25, index: 25, hightech: 25 },
-        vals:       { cash: 2_500_000, gold: 2_500_000, index: 2_500_000, hightech: 2_500_000 },
-        priceIndex: { cash: 100, gold: 100, index: 100, hightech: 100 },
-        lastChange: { cash: 0, gold: 0, index: 0, hightech: 0 },
+        cash:       INITIAL,                                   // 買付余力（現金ポジション）
+        holdings:   { gold: 0, index: 0, hightech: 0 },        // 保有口数
+        unitPrice:  { gold: START_PRICE.gold, index: START_PRICE.index, hightech: START_PRICE.hightech },
+        priceIndex: { gold: 100, index: 100, hightech: 100 },  // 指数表示（口価/初期×100）
+        lastChange: { gold: 0, index: 0, hightech: 0 },        // 直近月の変動率
+        feesPaid:   0,                                         // 累計支払手数料
+        regime:     0,                 // ② 地合い（-2 弱気 〜 +2 強気）
+        priceLevel: 100,               // ③ 物価水準（インフレ）
+        inflationMonth: BASE_INFLATION,// ③ 今月の物価上昇率
     };
 }
 let state = makeState();
 
+// 総資産 = 現金 + 各商品の評価額（名目）
+function totalAssets() {
+    return state.cash + TRADEABLE.reduce((s, id) => s + state.holdings[id] * state.unitPrice[id], 0);
+}
+// 実質総資産 = 名目総資産を物価で割り戻したもの（勝負はこの数字）
+function realTotal() {
+    return totalAssets() / (state.priceLevel / 100);
+}
+
 function fmt(n) { return '¥' + Math.round(n).toLocaleString('ja-JP'); }
+
+// 正規分布の乱数（Box-Muller）— 値動きのゆらぎ・地合いの揺れに使用
+function gauss(sd) {
+    let u = 0, v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v) * sd;
+}
+const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+function regimeLabel(r) {
+    if (r >= 0.8)   return { txt: '🐂 強気相場', col: '#3fb950' };
+    if (r >= 0.25)  return { txt: '🐂 やや強気', col: '#56d364' };
+    if (r <= -0.8)  return { txt: '🐻 弱気相場', col: '#f85149' };
+    if (r <= -0.25) return { txt: '🐻 やや弱気', col: '#ff7b72' };
+    return                 { txt: '➖ 中立',     col: '#8b949e' };
+}
 
 /* ================================================================
    スコア管理
@@ -829,9 +852,10 @@ function loadScores() {
     try { return JSON.parse(localStorage.getItem(SCORE_KEY)) || []; } catch { return []; }
 }
 function saveScore() {
+    const real   = realTotal();                            // 勝負は実質総資産
     const scores = loadScores();
-    scores.unshift({ date: new Date().toLocaleDateString('ja-JP'), total: state.total,
-                     pctRaw: (state.total - INITIAL) / INITIAL * 100, emoji: rankEmoji(state.total / INITIAL) });
+    scores.unshift({ date: new Date().toLocaleDateString('ja-JP'), total: real,
+                     pctRaw: (real - INITIAL) / INITIAL * 100, emoji: rankEmoji(real / INITIAL) });
     localStorage.setItem(SCORE_KEY, JSON.stringify(scores.slice(0, 10)));
 }
 function rankEmoji(r) {
@@ -913,25 +937,95 @@ function renderNews(revealed = false) {
 }
 
 /* ================================================================
-   表示：資産グリッド
+   売買（金額チップ式・手数料0.5%）
    ================================================================ */
-function renderAssetGrid() {
-    const grid = document.getElementById('asset-idx-grid');
+let tradingLocked = false;   // 月送り演出中は売買ロック
+
+function buy(id, yen) {
+    if (tradingLocked) return;
+    const price  = state.unitPrice[id];                    // 買付は手数料無料
+    const budget = yen === 'max' ? state.cash : Math.min(yen, state.cash);
+    const units  = Math.floor(budget / price);
+    if (units <= 0) { flashCash('現金が足りません'); return; }
+    const cost = units * price;
+    state.cash -= cost;
+    state.holdings[id] += units;
+    tradeMsg(`${ASSET_META[id].icon}${ASSET_META[id].name}を ${fmt(cost)} 分 購入（${units.toLocaleString('ja-JP')}口）`, 'buy');
+    afterTrade();
+}
+function sell(id, yen) {
+    if (tradingLocked) return;
+    const price = state.unitPrice[id];
+    const units = yen === 'all' ? state.holdings[id] : Math.min(state.holdings[id], Math.floor(yen / price));
+    if (units <= 0) { flashCash('保有がありません'); return; }
+    const gross = units * price;                           // 約定金額
+    const fee   = Math.round(gross * FEE_SELL);            // 売却手数料 5%
+    const net   = gross - fee;
+    state.cash += net;
+    state.holdings[id] -= units;
+    state.feesPaid += fee;
+    tradeMsg(`${ASSET_META[id].icon}${ASSET_META[id].name}を ${fmt(gross)} 分 売却 → 手取り ${fmt(net)}　<span style="color:#f85149">手数料 −${fmt(fee)}（5%）</span>`, 'sell');
+    addLog(`<span class="log-month">[${state.month}月]</span> 💰 ${ASSET_META[id].name}売却 ${fmt(gross)}　<span style="color:#f85149">手数料 −${fmt(fee)}</span>`);
+    afterTrade();
+}
+function afterTrade() {
+    renderTrading();
+    updateStatus();
+}
+let tradeMsgTimer = null;
+function tradeMsg(html, kind) {
+    const el = document.getElementById('trade-msg');
+    if (!el) return;
+    el.innerHTML = html;
+    el.style.borderColor = kind === 'sell' ? '#b62324' : '#238636';
+    el.style.display = 'block';
+    clearTimeout(tradeMsgTimer);
+    tradeMsgTimer = setTimeout(() => { el.style.display = 'none'; }, 3500);
+}
+let cashMsgTimer = null;
+function flashCash(msg) {
+    const el = document.getElementById('cash-display');
+    el.textContent = '⚠️ ' + msg;
+    clearTimeout(cashMsgTimer);
+    cashMsgTimer = setTimeout(() => { el.textContent = fmt(state.cash); }, 1200);
+}
+
+/* ================================================================
+   表示：売買カード
+   ================================================================ */
+function renderTrading() {
+    document.getElementById('cash-display').textContent = fmt(state.cash);
+    const grid = document.getElementById('trade-grid');
     grid.innerHTML = '';
-    ASSETS.forEach(id => {
-        const meta   = ASSET_META[id];
-        const chg    = state.lastChange[id];
-        const idx    = state.priceIndex[id];
-        const sign   = chg > 0 ? '+' : '';
-        const chgColor = chg > 0 ? '#3fb950' : chg < 0 ? '#f85149' : '#8b949e';
-        const chgStr = id === 'cash' ? '🛡️ 常時0%' : chg !== 0 ? sign + chg.toFixed(1) + '%' : '——';
+    TRADEABLE.forEach(id => {
+        const meta  = ASSET_META[id];
+        const price = state.unitPrice[id];
+        const held  = state.holdings[id];
+        const val   = held * price;
+        const chg   = state.lastChange[id];
+        const idxPnl = state.priceIndex[id] - 100;          // 口価の累計損益%
+        const sign  = chg > 0 ? '+' : '';
+        const chgCol = chg > 0 ? '#3fb950' : chg < 0 ? '#f85149' : '#6e7681';
+        const chgStr = chg !== 0 ? sign + chg.toFixed(1) + '%' : '—';
+        const pnlCol = idxPnl >= 0 ? '#3fb950' : '#f85149';
+        const noHold = held <= 0;
         const card = document.createElement('div');
-        card.className = 'ai-card';
+        card.className = 'trade-card';
         card.innerHTML = `
-            <div class="ai-name" style="color:${meta.color}">${meta.icon} ${meta.name}</div>
-            <div class="ai-value">${fmt(state.vals[id])}</div>
-            <div class="ai-chg" style="color:${id === 'cash' ? '#8b949e' : chgColor}">${chgStr}</div>
-            <div class="ai-index">指数 <strong>${idx.toFixed(1)}</strong></div>`;
+            <div class="tc-top">
+                <div class="tc-name" style="color:${meta.color}">${meta.icon} ${meta.name}</div>
+                <div><span class="tc-price">${fmt(price)}</span><span class="tc-unit"> /口</span><span class="tc-chg" style="color:${chgCol}">${chgStr}</span></div>
+            </div>
+            <div class="tc-info">保有 <b>${held.toLocaleString('ja-JP')}口</b>　評価額 <b>${fmt(val)}</b>　口価損益 <span style="color:${pnlCol}">${idxPnl >= 0 ? '+' : ''}${idxPnl.toFixed(1)}%</span></div>
+            <div class="tc-actions">
+                <span class="tc-tag">買</span>
+                <button class="tc-btn tc-buy" onclick="buy('${id}',100000)">+10万</button>
+                <button class="tc-btn tc-buy" onclick="buy('${id}',500000)">+50万</button>
+                <button class="tc-btn tc-buy" onclick="buy('${id}','max')">全力</button>
+                <span class="tc-tag" style="margin-left:6px">売</span>
+                <button class="tc-btn tc-sell" onclick="sell('${id}',100000)" ${noHold ? 'disabled' : ''}>−10万</button>
+                <button class="tc-btn tc-sell" onclick="sell('${id}','all')" ${noHold ? 'disabled' : ''}>全部</button>
+            </div>`;
         grid.appendChild(card);
     });
 }
@@ -940,31 +1034,26 @@ function renderAssetGrid() {
    表示：ステータスバー
    ================================================================ */
 function updateStatus() {
+    const total = totalAssets();
+    const real  = realTotal();
     document.getElementById('month-display').textContent = `${state.month} / ${MAX_MONTHS}`;
-    document.getElementById('total-display').textContent = fmt(state.total);
-    const pnl = state.total - INITIAL;
-    const el  = document.getElementById('pnl-display');
-    if (pnl > 0)      { el.textContent = '+' + fmt(pnl); el.className = 'status-value val-positive'; }
-    else if (pnl < 0) { el.textContent = fmt(pnl);        el.className = 'status-value val-negative'; }
-    else              { el.textContent = '± ¥0';           el.className = 'status-value val-neutral';  }
-}
+    document.getElementById('total-display').textContent = fmt(total);
+    document.getElementById('cash-display').textContent  = fmt(state.cash);
 
-/* ================================================================
-   スライダー操作
-   ================================================================ */
-function onSlider(id) {
-    const v = parseInt(document.getElementById(`slider-${id}`).value, 10);
-    state.allocs[id] = v;
-    document.getElementById(`sv-${id}`).textContent  = v + '%';
-    document.getElementById(`sbg-${id}`).style.width = v + '%';
-    refreshTotal();
-}
-function refreshTotal() {
-    const sum = ASSETS.reduce((a, id) => a + state.allocs[id], 0);
-    const el  = document.getElementById('total-pct');
-    el.textContent = sum + '%';
-    el.className   = 'total-value ' + (sum === 100 ? 'total-ok' : 'total-warn');
-    document.getElementById('btn-next').disabled = (sum !== 100);
+    // ⭐実質総資産（勝負の数字）— 初期資産との大小で色付け
+    const rel = document.getElementById('real-display');
+    rel.textContent = fmt(real);
+    rel.className = 'status-value ' + (real > INITIAL ? 'val-positive' : real < INITIAL ? 'val-negative' : 'val-neutral');
+
+    // ② 地合い ③ 物価・実質損益
+    const rl = regimeLabel(state.regime);
+    const mr = document.getElementById('mood-regime');
+    mr.textContent = rl.txt; mr.style.color = rl.col;
+    document.getElementById('mood-inflation').textContent = '+' + (state.priceLevel - 100).toFixed(1) + '%';
+    const realPnl = (real - INITIAL) / INITIAL * 100;
+    const mrl     = document.getElementById('mood-real');
+    mrl.textContent = (realPnl >= 0 ? '+' : '') + realPnl.toFixed(1) + '%';
+    mrl.style.color = realPnl >= 0 ? '#3fb950' : '#f85149';
 }
 
 /* ================================================================
@@ -977,45 +1066,61 @@ function nextMonth() {
     const { main, sub } = currentNews;
     const combined = { cash: 0, gold: 0, index: 0, hightech: 0 };
 
-    // メインニュース解決（appliedEffects = 実際の寄与）
-    main.wasReal = Math.random() < main.rel.value;
-    const mMult  = main.wasReal ? 1 : -1;
+    // メインニュース解決（① 同じニュースでも結果はぶれる）
+    main.wasReal  = Math.random() < main.rel.value;
+    const mMult   = main.wasReal ? 1 : -1;
+    const mFactor = clamp(1 + gauss(0.18), 0.5, 1.55);
     main.appliedEffects = {};
     ASSETS.forEach(id => {
-        const e = main.statedEffects[id] * mMult;
+        const e = main.statedEffects[id] * mMult * mFactor;
         main.appliedEffects[id] = e;
         combined[id] += e;
     });
 
     // サブニュース解決
     sub.forEach(n => {
-        n.wasReal = Math.random() < n.rel.value;
+        n.wasReal  = Math.random() < n.rel.value;
         const mult = n.wasReal ? 1 : -1;
+        const f    = clamp(1 + gauss(0.2), 0.4, 1.6);
         n.appliedEffects = {};
         ASSETS.forEach(id => {
-            const e = n.statedEffects[id] * mult;
+            const e = n.statedEffects[id] * mult * f;
             n.appliedEffects[id] = e;
             combined[id] += e;
         });
     });
 
-    // 背景ドリフト加算、現金は絶対0
-    ASSETS.forEach(id => { combined[id] += DRIFT[id]; });
+    // ② 地合い（強気/弱気）の持続的な底流を加算（控えめ：相場の流れを作る）
+    const reg = state.regime;
+    combined.index    += reg * 1.5;
+    combined.hightech += reg * 2.5;
+    combined.gold     += reg * -1.2;
+
+    // 背景ドリフト ＋ ① 値動きのゆらぎ（ニュースが無くても市場は動く）
+    ASSETS.forEach(id => { combined[id] += DRIFT[id] + gauss(VOL[id]); });
     combined.cash = 0;
 
-    // リバランス → 価格変動適用
-    ASSETS.forEach(id => { state.vals[id] = state.total * (state.allocs[id] / 100); });
-    ASSETS.forEach(id => {
+    // ② 地合いを更新：ほぼ独立した強気/弱気サイクル＋ニュースで少し傾く（次月以降へ持続）
+    const moodShift = (main.appliedEffects.index + main.appliedEffects.hightech) / 2;
+    state.regime = clamp(state.regime * 0.65 + moodShift * 0.008 + gauss(0.22), -1.3, 1.3);
+
+    // ③ インフレ：有事・危機（ゴールド急騰）で物価上昇圧力が高まる
+    const infPressure = Math.max(0, main.appliedEffects.gold) * 0.012;
+    state.inflationMonth = clamp(state.inflationMonth * 0.5 + BASE_INFLATION * 0.5 + infPressure + gauss(0.06), 0, 2.5);
+    state.priceLevel *= (1 + state.inflationMonth / 100);
+
+    // 価格変動を口価に適用（現金は不変・リバランス無し）
+    TRADEABLE.forEach(id => {
         const rate            = combined[id] / 100;
-        state.vals[id]       *= (1 + rate);
+        state.unitPrice[id]   = Math.max(1, Math.round(state.unitPrice[id] * (1 + rate)));
         state.priceIndex[id] *= (1 + rate);
         state.lastChange[id]  = combined[id];
     });
-    state.total = ASSETS.reduce((sum, id) => sum + state.vals[id], 0);
 
+    tradingLocked = true;          // 演出中は売買ロック
     renderNews(true);
     updateStatus();
-    renderAssetGrid();
+    renderTrading();
 
     if (!main.wasReal) {
         addLog(`<span class="log-month">[${state.month}月]</span> 🎭 <span style="color:#f85149">メインニュース「${main.emoji}${main.label}」はフェイクでした！</span>`);
@@ -1024,11 +1129,13 @@ function nextMonth() {
     if (fakeSubs.length) {
         addLog(`<span class="log-month">[${state.month}月]</span> 🎭 <span style="color:#ffa657">サブフェイク: ${fakeSubs.map(n => n.emoji + n.label).join(' / ')}</span>`);
     }
-    const cp = ASSETS.map(id => {
+    const cp = TRADEABLE.map(id => {
         const v = combined[id]; const s = v > 0 ? '+' : ''; const c = v > 0 ? '#3fb950' : v < 0 ? '#f85149' : '#8b949e';
-        return `<span style="color:${c}">${id === 'cash' ? '0.0%' : s + v.toFixed(1) + '%'}</span>`;
+        return `<span style="color:${c}">${s + v.toFixed(1)}%</span>`;
     });
-    addLog(`<span class="log-month">[${state.month}月]</span> 💴${cp[0]} 💛${cp[1]} 🌍${cp[2]} 💻${cp[3]}`);
+    addLog(`<span class="log-month">[${state.month}月]</span> 💛${cp[0]} 🌍${cp[1]} 💻${cp[2]}`);
+    const rl = regimeLabel(state.regime);
+    addLog(`<span class="log-month">[${state.month}月]</span> 🌐 地合い <span style="color:${rl.col}">${rl.txt}</span>　物価 <span style="color:#ffa657">+${(state.priceLevel - 100).toFixed(1)}%</span>`);
 
     if (state.month >= MAX_MONTHS) {
         setTimeout(() => { saveScore(); showGameOver(); }, 2000);
@@ -1037,9 +1144,10 @@ function nextMonth() {
     setTimeout(() => {
         state.month++;
         currentNews = generateMonthlyNews();
+        tradingLocked = false;
         updateStatus();
         renderNews(false);
-        renderAssetGrid();
+        renderTrading();
         btn.disabled = false;
     }, 2000);
 }
@@ -1061,11 +1169,13 @@ function showGameOver() {
     const screen = document.getElementById('game-over-screen');
     screen.style.display = 'block';
 
-    const pnl    = state.total - INITIAL;
+    const total  = totalAssets();                          // 名目総資産
+    const real   = realTotal();                            // ⭐実質総資産（勝負はこれ）
+    const pnl    = real - INITIAL;
     const pnlPct = ((pnl / INITIAL) * 100).toFixed(1);
     const sign   = pnl >= 0 ? '+' : '';
     const color  = pnl >= 0 ? '#3fb950' : '#f85149';
-    const ratio  = state.total / INITIAL;
+    const ratio  = real / INITIAL;                         // ランクも実質基準
     const emoji  = rankEmoji(ratio);
     let rank, title;
     if (ratio >= 3.0)      { rank = 'LEGENDARY'; title = '伝説のファンドマネージャー'; }
@@ -1075,9 +1185,12 @@ function showGameOver() {
     else if (ratio >= 0.7) { rank = 'LOSER';     title = '資産が目減りした'; }
     else                   { rank = 'BANKRUPT';  title = '資産を溶かした'; }
 
+    const nomPct  = ((total - INITIAL) / INITIAL * 100).toFixed(1);
+    const nomSign = total - INITIAL >= 0 ? '+' : '';
+
     const scores = loadScores();
-    const best   = Math.max(...scores.map(s => s.total));
-    const avg    = scores.reduce((a, s) => a + s.total, 0) / scores.length;
+    const best   = scores.length ? Math.max(...scores.map(s => s.total)) : real;
+    const avg    = scores.length ? scores.reduce((a, s) => a + s.total, 0) / scores.length : real;
     const pb     = ((best - INITIAL) / INITIAL * 100).toFixed(0);
     const pa     = ((avg  - INITIAL) / INITIAL * 100).toFixed(0);
     const colC   = n => parseFloat(n) >= 0 ? '#3fb950' : '#f85149';
@@ -1093,10 +1206,11 @@ function showGameOver() {
             <div class="go-emoji">${emoji}</div>
             <div class="go-rank">${rank}</div>
             <div class="go-title" style="color:${color}">${title}</div>
-            <div class="go-sub">12か月の運用成績</div>
-            <div class="go-amount" style="color:${color}">${fmt(state.total)}</div>
+            <div class="go-sub">⭐ 実質総資産（物価調整後）で決着</div>
+            <div class="go-amount" style="color:${color}">${fmt(real)}</div>
             <div class="go-pnl" style="color:${color}">${sign}${fmt(pnl)}（${sign}${pnlPct}%）</div>
-            <div class="go-initial">初期資産 ${fmt(INITIAL)}</div>
+            <div class="go-initial">名目総資産 ${fmt(total)}（${nomSign}${nomPct}%）・ 物価 +${(state.priceLevel - 100).toFixed(1)}%</div>
+            <div class="go-real">初期資産 ${fmt(INITIAL)} ・ 支払手数料 累計 ${fmt(state.feesPaid)}</div>
             <div class="go-stats">
                 <div class="gs-item"><div class="gs-label">🏆 ベスト</div><div class="gs-val" style="color:${colC(pb)}">${sgnC(pb)}${pb}%</div></div>
                 <div class="gs-item"><div class="gs-label">📊 平均</div><div class="gs-val" style="color:${colC(pa)}">${sgnC(pa)}${pa}%</div></div>
@@ -1139,22 +1253,21 @@ function startGame() {
     document.getElementById('game-area').style.display        = 'block';
     document.getElementById('event-log').innerHTML = `
         <div class="log-header">運用ログ</div>
-        <div class="log-entry"><span class="log-month">[START]</span> 12か月の運用開始！ニュースを読んで配分を決めよう。</div>`;
-    ASSETS.forEach(id => {
-        document.getElementById(`slider-${id}`).value    = 25;
-        document.getElementById(`sv-${id}`).textContent  = '25%';
-        document.getElementById(`sbg-${id}`).style.width = '25%';
-    });
+        <div class="log-entry"><span class="log-month">[START]</span> 12か月の運用開始！ニュースを読んで商品を買おう。現金のまま様子見もアリ。</div>`;
+    tradingLocked = false;
     currentNews = generateMonthlyNews();
     updateStatus();
-    refreshTotal();
     renderNews(false);
-    renderAssetGrid();
+    renderTrading();
 }
 
 /* ================================================================
    初期化 → タイトル画面から開始
    ================================================================ */
+['ver-title', 'ver-game'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.textContent = 'ver ' + VERSION;
+});
 showTitle();
 </script>
 </body>
